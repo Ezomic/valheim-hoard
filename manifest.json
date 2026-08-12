@@ -1,0 +1,10 @@
+{
+  "name": "Hoard",
+  "author": "Robbin Thijssen",
+  "version_number": "1.0.0",
+  "website_url": "",
+  "description": "Bigger stacks, without unbalancing the game.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2333"
+  ]
+}
