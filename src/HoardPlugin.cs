@@ -8,7 +8,7 @@ namespace Hoard
     [BepInProcess("valheim.exe")]
     public class HoardPlugin : BaseUnityPlugin
     {
-        public const string PluginGuid = "robbin.valheim.hoard";
+        public const string PluginGuid = "ezomic.valheim.hoard";
         public const string PluginName = "Hoard";
         public const string PluginVersion = "1.0.0";
         public const string PluginAuthor = "Robbin Thijssen";
