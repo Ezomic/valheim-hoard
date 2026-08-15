@@ -5,7 +5,10 @@ using HarmonyLib;
 namespace Hoard
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInProcess("valheim.exe")]
+    // No BepInProcess. It is a whitelist, and a dedicated server runs valheim_server.exe.
+    // This mod already patches CopyOtherDB precisely because a client rebuilds its item
+    // database from the server's copy - so a server without it hands back vanilla stack
+    // sizes and undoes the mod on every join.
     public class HoardPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "ezomic.valheim.hoard";
