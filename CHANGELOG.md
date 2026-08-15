@@ -1,0 +1,44 @@
+# Changelog
+
+Notable changes to Hoard. Format follows [Keep a Changelog](https://keepachangelog.com),
+and the mod uses [semantic versioning](https://semver.org).
+
+## [1.0.0] — 2026-08-16
+
+First release.
+
+### Stacks
+
+- **Stacks double.** Wood 50 becomes 100, with a hard ceiling of 200 whatever the multiplier
+  says.
+- **Weight is untouched by default.** The carry limit still decides what comes home, which is
+  the half of the logistics problem worth keeping.
+- **Ore and metal bars are not modified at all.** Metal cannot go through a portal, so
+  hauling it by cart and boat is deliberate pacing rather than an oversight. One config line
+  turns it on if you disagree.
+- **Equipment is never made stackable.** Only items with a vanilla stack size above 1 are
+  touched, because anything that does not stack in vanilla carries per-item durability and
+  quality, and collapsing several into a count throws all but one of those away silently.
+
+### Why the defaults are low
+
+The usual version of this mod ships x10 stacks and halved weight, which does not make
+Valheim more convenient so much as remove a system from it. The tedium and the difficulty
+are the same mechanic seen from two sides, so the defaults here fix the annoying half and
+leave the interesting half alone. Everything is a knob if you want the easy version.
+
+### Correctness
+
+- **Both `ObjectDB.Awake` and `ObjectDB.CopyOtherDB` are patched.** `Awake` builds the
+  database at startup and `CopyOtherDB` rebuilds it when a world loads, so patching only the
+  first means untouched values quietly replace yours the moment you join a game.
+- **Every value is computed from the item's original**, captured the first time it is seen
+  and never overwritten. The database is set up more than once, and a mod that multiplies
+  whatever it currently finds squares its own multiplier on the second pass.
+- Loads on dedicated servers, and declares to Core's version gate so a host and a client
+  cannot disagree about stack sizes.
+
+### Known limits
+
+- If another mod changes an item before this one first sees it, that changed value is what
+  gets recorded as the original.

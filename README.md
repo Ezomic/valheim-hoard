@@ -50,7 +50,7 @@ sees it, its value is what gets recorded as "original".
 
 ## Config
 
-`BepInEx\config\robbin.valheim.hoard.cfg`
+`BepInEx\config\ezomic.valheim.hoard.cfg`
 
 | Key | Default | What it does |
 | --- | --- | --- |
