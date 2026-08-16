@@ -2,7 +2,7 @@
   "name": "Hoard",
   "author": "Robbin Thijssen",
   "version_number": "1.0.0",
-  "website_url": "",
+  "website_url": "https://github.com/Ezomic/valheim-hoard",
   "description": "Bigger stacks, without unbalancing the game.",
   "dependencies": [
     "Ezomic-Longhouse_Core-0.2.0",
