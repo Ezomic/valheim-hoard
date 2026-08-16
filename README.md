@@ -48,6 +48,18 @@ means changing the multiplier and reloading gives the right answer instead of co
 One caveat that follows from that: if another mod changes an item before this one first
 sees it, its value is what gets recorded as "original".
 
+
+## Core is optional
+
+Hoard installs and runs on its own. [Core](https://github.com/Ezomic/valheim-core) is a
+**soft** dependency: present, it is used; absent, nothing here is degraded. Installing
+Hoard from Thunderstore no longer installs Core with it.
+
+What Core adds is the **version gate** — a handshake that compares mod versions and build
+ids on connect and refuses a client that does not match. Without it nothing reports two ends running different item data, which desyncs inventories. The `ObjectDB.CopyOtherDB` patch still puts a joining client on the server's numbers, which covers the common case on its own.
+
+Solo, none of that applies and Core is not needed at all.
+
 ## Config
 
 `BepInEx\config\ezomic.valheim.hoard.cfg`
