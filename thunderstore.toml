@@ -9,7 +9,7 @@ namespace = "Ezomic"
 name = "Hoard"
 versionNumber = "1.0.0"
 description = "Bigger stacks, without unbalancing the game."
-websiteUrl = ""
+websiteUrl = "https://github.com/Ezomic/valheim-hoard"
 containsNsfwContent = false
 
 [package.dependencies]
