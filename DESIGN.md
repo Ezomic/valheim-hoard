@@ -5,8 +5,8 @@ see the [README](README.md).
 
 ## Where the biome routes stop
 
-That lands **665 of 671 stackable items**. The six left over are crafting oddities —
-`AxeHead1`, `AxeHead2`, `BarrelRings`, `FireworksRocket_White`, `Ironpit`, `ScytheHandle` —
+That lands **665 of 671 stackable items**. The six left over are crafting oddities
+(`AxeHead1`, `AxeHead2`, `BarrelRings`, `FireworksRocket_White`, `Ironpit`, `ScytheHandle`),
 left unplaced rather than guessed at, because a wrong biome is worse than vanilla.
 
 An item found in several biomes belongs to the **earliest**, because that is where you first
@@ -14,8 +14,8 @@ had to carry it home. A crafted one takes the **latest** of its ingredients. Tho
 sound contradictory and are not: found is about where it turns up, made is about when you can
 make it.
 
-That last route exists because some things are inside **locations** — copper and silver
-deposits, iron scrap in Sunken Crypts — and a location keeps its prefab as a soft reference
+That last route exists because some things are inside **locations** (copper and silver
+deposits, iron scrap in Sunken Crypts) and a location keeps its prefab as a soft reference
 that is not loaded until the game wants it. Forcing dungeon interiors to load on the way into
 a world, to learn something that fits on one config line, is not a trade worth making.
 
@@ -28,12 +28,12 @@ stays at vanilla, which is the same thing that happens to an item no tier names.
 Stack size lives on the item prefab, so "different players, different stacks" would mean two
 clients with different item databases. One drops a hundred wood in the shared chest, the other
 opens it holding a slot bigger than its own maximum, and the next move writes back through the
-smaller rules — silent loss out of a shared chest, the worst bug a storage mod can have.
+smaller rules: silent loss out of a shared chest, the worst bug a storage mod can have.
 
 ## Why the item list is built by the tuning pass
 
 The rows are built by the tuning pass itself rather than by a
-second walk over the database — a separate walk would be a second copy of the eligibility
+second walk over the database, since a separate walk would be a second copy of the eligibility
 rules, and the first thing it would do is disagree with the real one.
 
 ## Implementation notes
@@ -52,11 +52,11 @@ sees it, its value is what gets recorded as "original".
 
 ## What to check
 
-1. On a world with Eikthyr down, wood should cap at 100 — and on a fresh world it should
+1. On a world with Eikthyr down, wood should cap at 100, and on a fresh world it should
    still be 50, with the item list saying `awaiting defeated_eikthyr`.
 2. **Copper ore should still cap at 30** until Bonemass, because it cannot be teleported.
 3. Weight per item should be exactly vanilla.
 4. A sword or axe should still not stack.
-5. Open `ezomic.valheim.hoard.items.txt` if a specific item looks wrong — it names every
+5. Open `ezomic.valheim.hoard.items.txt` if a specific item looks wrong. It names every
    item and the rule that left it alone. `Verbose = true` is for watching a single pass
    happen in the log; the file is the better answer to a question about one item.

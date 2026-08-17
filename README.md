@@ -7,7 +7,7 @@ Built against the installed game (0.221.12, Unity 6000.0.61, BepInEx 5.4.23.3, H
 ## The defaults are the point
 
 The usual version of this mod ships x10 stacks and halved weight. That does not make
-Valheim more convenient so much as remove a system from it — the mid game is largely a
+Valheim more convenient so much as remove a system from it. The mid game is largely a
 logistics problem, and the tedium and the difficulty are the same mechanic seen from two
 sides.
 
@@ -59,14 +59,14 @@ There is no table of items in this mod. Four routes, all reading the game's own 
   metal scrap. So black metal is a Plains item.
 - **Recipes and stations.** Anything made takes the biome of its **latest** ingredient,
   because that is when you could first make it. Barley is Plains, so flour is Plains, so
-  dough is Plains, so bread is Plains — through a mill, a recipe and an oven in turn, none of
+  dough is Plains, so bread is Plains, through a mill, a recipe and an oven in turn, none of
   it written down here. Every mead lands the same way, off the fermenter.
 - **Spawners.** A greydwarf nest or a surtling geyser is placed in a biome, and it is the
   nest rather than the creature that the tables know about.
 - **Bosses place their own drops.** A boss prefab knows the global key its death sets, and
   the tier table knows which biome that key belongs to, so Moder's trophy is a Mountain item
   without either side naming it.
-- **`BiomeOverrides`** for the roots none of that reaches — ore deposits, dungeon loot, fish
+- **`BiomeOverrides`** for the roots none of that reaches: ore deposits, dungeon loot, fish
   and the trophies of creatures that only appear inside a location. Roots only: the recipe
   pass turns each one into everything made from it.
 
@@ -82,7 +82,7 @@ make it.
 **The groups are read off the game's own systems, not a list in this mod.** Building material
 is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds
 lands in the right group by itself. Metal is whatever the game refuses to send through a
-portal — the same flag the pacing rule already used.
+portal, the same flag the pacing rule already used.
 
 Every row is one line of `ProgressionTiers`, so a different table is one edit. Any global key
 works, not just a boss key.
@@ -115,7 +115,7 @@ mod needs the other, and `DeferToUtangard = false` turns it off.
 
 **It never makes equipment stackable.** Only items with a vanilla stack size above 1 are
 touched. An item that does not stack in vanilla is a weapon, a tool or a piece of armour,
-and those carry per-item durability and quality — collapsing several into a count silently
+and those carry per-item durability and quality, and collapsing several into a count silently
 throws all but one of those away.
 
 ## Design notes
@@ -130,7 +130,7 @@ Hoard installs and runs on its own. [Core](https://github.com/Ezomic/valheim-cor
 **soft** dependency: present, it is used; absent, nothing here is degraded. Installing
 Hoard from Thunderstore no longer installs Core with it.
 
-What Core adds is the **version gate** — a handshake that compares mod versions and build
+What Core adds is the **version gate**, a handshake that compares mod versions and build
 ids on connect and refuses a client that does not match. Without it nothing reports two ends running different item data, which desyncs inventories. The `ObjectDB.CopyOtherDB` patch still puts a joining client on the server's numbers, which covers the common case on its own.
 
 Solo, none of that applies and Core is not needed at all.
@@ -142,7 +142,7 @@ Solo, none of that applies and Core is not needed at all.
 | Key | Default | What it does |
 | --- | --- | --- |
 | `ScaleWithProgression` | `true` | Each boss raises one group. Off falls back to `StackMultiplier` |
-| `ProgressionBase` | `1` | Multiplier for a group no boss has unlocked — 1 is vanilla |
+| `ProgressionBase` | `1` | Multiplier for a group no boss has unlocked; 1 is vanilla |
 | `ProgressionTiers` | see above | `boss:group:multiplier`, comma separated |
 | `ProgressionStep` | `0` | Later bosses re-raise earlier groups by this fraction, compounding |
 | `ProgressionOrder` | the seven bosses | What "later" means; idle while `ProgressionStep` is 0 |
@@ -156,13 +156,13 @@ Solo, none of that applies and Core is not needed at all.
 | `WriteItemList` | `true` | Write the item list described below beside the `.cfg` |
 | `Verbose` | `false` | Log every item that changed |
 
-A value already written to the `.cfg` beats a new default in code — change the `.cfg`.
+A value already written to the `.cfg` beats a new default in code. Change the `.cfg`.
 
 ## The item list
 
 `BepInEx\config\ezomic.valheim.hoard.items.txt`, rewritten on every run.
 
-`ExcludeItems` takes prefab names, and prefab names are not guessable — copper ore is
+`ExcludeItems` takes prefab names, and prefab names are not guessable: copper ore is
 `CopperOre` but raspberries are `Raspberry` and a draugr's arrow is `draugr_arrow`. So the
 mod writes down every item it saw, what it did to each one, and which rule stopped it when
 it did nothing:
@@ -191,4 +191,4 @@ into the shared play profile with `valheim-own-profile\build-all.ps1`.
 ## Author
 
 Hoard is an original mod by **Robbin Thijssen** (Thijssen Software).
-Copyright (c) 2026 Robbin Thijssen. MIT licensed — see `LICENSE`.
+Copyright (c) 2026 Robbin Thijssen. MIT licensed. See `LICENSE`.
