@@ -33,28 +33,49 @@ A flat multiplier cannot tell the two halves of that argument apart. Meadows sca
 game teaching you to plan; your ninth trip to the same copper deposit is not teaching you
 anything. So stacks start at vanilla and each boss raises **one group**:
 
-| Boss | Raises | Which is |
-| --- | --- | --- |
-| Eikthyr | `building` | anything the Hammer asks for — wood, stone, resin |
-| The Elder | `farming` | anything the Cultivator asks for — seeds and crops |
-| Bonemass | `metal` and `trophy` | anything a portal refuses, plus trophies |
+**Kill a biome's boss and the things that biome gives you stack better.**
 
-**That is the whole table, and the gaps are the point.** Ammo, food and the general run of
-craft materials have no entry and stay at vanilla forever. A stack mod that eventually
-doubles everything is just a slower version of the x10 one; these three are the hauling that
-is genuinely repetitive, and the rest was never the problem.
+| Boss | Raises |
+| --- | --- |
+| Eikthyr | Meadows |
+| The Elder | Black Forest |
+| Bonemass | Swamp |
+| Moder | Mountain |
+| Yagluth | Plains |
+| The Queen | Mistlands |
+| Fader | Ashlands |
 
-### It finishes at Bonemass, on purpose
+So the copper you carry out of the Black Forest stops being a nuisance once the Black
+Forest's boss is dead, and not before. Every boss matters, and each one eases exactly the
+hauling you have just finished proving you can survive.
 
-Nothing after Bonemass changes a stack size, and that is the design rather than a gap. By
-then you have portals, a cart and a longship — the game has solved hauling by itself, and a
-reward table that keeps paying past the point where the problem exists is padding.
+### Which biome an item belongs to is worked out, not listed
 
-`ProgressionStep` will make every later boss raise the earlier groups again by a percentage,
-compounding, if you want the back half of the game to keep moving. It is **0 by default**,
-because ten extra wood in a slot is not a reward anyone can feel, because it produces stack
-sizes like 133 that read as a bug beside vanilla's round numbers, and because it drifts past
-the flat 2x this mod argues is the honest amount.
+There is no table of items in this mod. Four routes, all reading the game's own data:
+
+- **The world's vegetation table** places a copper deposit in the Black Forest, and the
+  deposit says it drops copper ore. So copper ore is a Black Forest item.
+- **The spawn tables** place Fulings in the Plains, and the Fuling's drop list says black
+  metal scrap. So black metal is a Plains item.
+- **Recipes and stations.** Anything made takes the biome of its **latest** ingredient,
+  because that is when you could first make it. Barley is Plains, so flour is Plains, so
+  dough is Plains, so bread is Plains — through a mill, a recipe and an oven in turn, none of
+  it written down here. Every mead lands the same way, off the fermenter.
+- **`BiomeOverrides`** for the handful none of that reaches.
+
+An item found in several biomes belongs to the **earliest**, because that is where you first
+had to carry it home. A crafted one takes the **latest** of its ingredients. Those two rules
+sound contradictory and are not: found is about where it turns up, made is about when you can
+make it.
+
+That last route exists because some things are inside **locations** — copper and silver
+deposits, iron scrap in Sunken Crypts — and a location keeps its prefab as a soft reference
+that is not loaded until the game wants it. Forcing dungeon interiors to load on the way into
+a world, to learn something that fits on one config line, is not a trade worth making.
+
+**The item list prints every item that ended up with no biome**, so that line gets filled in
+from what is actually missing rather than from guesswork. Anything still unplaced simply
+stays at vanilla, which is the same thing that happens to an item no tier names.
 
 **The groups are read off the game's own systems, not a list in this mod.** Building material
 is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds

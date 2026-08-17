@@ -27,7 +27,7 @@ namespace Hoard
         public const string PluginName = "Hoard";
         // Pre-1.0 on purpose: 1.0.0 is reserved for the first version that has been played
         // and published. See CHANGELOG.md.
-        public const string PluginVersion = "0.11.1";
+        public const string PluginVersion = "0.12.0";
         public const string PluginAuthor = "Robbin Thijssen";
 
         /// <summary>Core's plugin GUID. Optional - see TryRegisterWithCore.</summary>
@@ -137,6 +137,25 @@ namespace Hoard
         private static void TuneOnGlobalKey()
         {
             StackTuner.ApplyIfProgressionChanged();
+        }
+
+        /// <summary>
+        /// The last of the three tables the biome index needs to turn up.
+        ///
+        /// ZoneSystem is up early enough that the world's keys arrive through it, and
+        /// ZNetScene with the world - but SpawnSystem appears later, and a pass that ran
+        /// before it has creature drops missing from every biome. There is no ordering to
+        /// rely on here, so the index is simply rebuilt when the straggler arrives.
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(SpawnSystem), "Awake")]
+        private static void TuneWhenSpawnersExist()
+        {
+            // Once. There is more than one SpawnSystem in a loaded world, and without this
+            // every one of them rebuilds the index and walks the whole item database again.
+            if (BiomeIndex.Complete) return;
+
+            StackTuner.Rebuild();
         }
     }
 }

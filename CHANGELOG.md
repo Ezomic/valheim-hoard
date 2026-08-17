@@ -7,6 +7,57 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.12.0] — 2026-08-17
+
+### A boss raises the biome it guards
+
+The four hand-made categories are gone. Each boss now raises the stacks of **everything that
+comes from its own biome** — Eikthyr the Meadows, The Elder the Black Forest, Bonemass the
+Swamp, and so on through Fader and the Ashlands. Copper stops being a nuisance once the
+Black Forest's boss is dead, and not before.
+
+This also settles what the last three versions kept circling: with a biome each, all seven
+bosses matter without inventing categories for the late ones or adding a percentage drift.
+
+**Nothing is listed.** Which biome an item belongs to is worked out from four sources:
+
+- `ZoneSystem.m_vegetation` — a copper deposit is Black Forest and the deposit says it drops
+  copper ore, so copper ore is Black Forest.
+- The spawn tables plus `CharacterDrop` — Fulings are Plains, so black metal scrap is Plains.
+- Recipes, smelters, cooking stations and fermenters, where a made thing takes the biome of
+  its **latest** ingredient. Barley is Plains, so flour is, so dough is, so bread is — across
+  a mill, a recipe and an oven. Every mead lands off the fermenter the same way.
+- `BiomeOverrides`, for what none of that reaches.
+
+Found items take the **earliest** biome they appear in, made items the **latest** of their
+ingredients. Not a contradiction: found is about where it turns up, made is about when you
+could make it. That rule also repairs a wrong answer for free — Charred warriors drop bronze,
+so the spawn tables call bronze an Ashlands item, and the recipe calling it Black Forest wins.
+
+On this machine it places **543 items**, with 122 stackables left over — mostly fish,
+trophies and chest loot, all of which stay at vanilla. The item list prints them so
+`BiomeOverrides` is filled in from what is really missing.
+
+The overrides shipped by default are the ones no table can see: iron scrap and the copper and
+silver deposits live inside locations, whose prefabs are soft references that are not loaded
+until the game wants them, and forcing dungeon interiors to load on the way into a world is
+not worth what it buys.
+
+`LiftPortalRuleAt` replaces the old metal group: the Swamp tier now lifts the portal rule,
+because Bonemass is where iron begins and the copper runs are behind you by then.
+
+### Fixed
+
+- The index rebuilt **once per item** while incomplete, walking every prefab in the scene a
+  thousand times per pass. It is built once per pass now.
+- `SpawnSystem.Awake` fires more than once in a loaded world; the rebuild is guarded so it
+  happens on the first one only.
+- Overrides were applied after the conversions, so copper bars came out unplaced — the
+  smelter pass went looking for copper ore before the override had put it on the map. They
+  are applied before the derivation as well as after.
+- Conversions and recipes ran in sequence, which left bread unplaced whatever the pass count,
+  because the step it waited on lived in the other list. They interleave until it settles.
+
 ## [0.11.1] — 2026-08-17
 
 ### Progression finishes at Bonemass

@@ -29,6 +29,8 @@ namespace Hoard
         public static ConfigEntry<string> ProgressionTiers;
         public static ConfigEntry<string> ProgressionOrder;
         public static ConfigEntry<float> ProgressionStep;
+        public static ConfigEntry<string> LiftPortalRuleAt;
+        public static ConfigEntry<string> BiomeOverrides;
         public static ConfigEntry<bool> DeferToUtangard;
         public static ConfigEntry<string> ExcludeItems;
         public static ConfigEntry<bool> WriteItemList;
@@ -84,21 +86,24 @@ namespace Hoard
                 + "the point: the early game is supposed to be tight.");
 
             ProgressionTiers = config.Bind("Progression", "ProgressionTiers",
-                "defeated_eikthyr:building:2, defeated_gdking:farming:2, "
-                + "defeated_bonemass:metal:2, defeated_bonemass:trophy:2",
-                "boss:group:multiplier, comma separated. The highest earned entry naming a "
-                + "group wins, so entries never compound. One boss may name several groups.\n"
-                + "Ammo, food and everything else are deliberately absent: a group with no "
-                + "entry stays at vanilla forever, and most of the game's stackables are "
-                + "meant to. What is here is the hauling that is genuinely repetitive.\n"
-                + "Groups: building (anything the Hammer asks for), farming (anything the "
-                + "Cultivator asks for), metal (anything a portal refuses), food, ammo, "
-                + "trophy, other, and all.\n"
-                + "The groups are read off those tools' piece tables rather than a list here, "
-                + "so an item a content mod adds lands in the right one by itself.\n"
-                + "An earned metal tier also lifts the portal rule - see "
-                + "IncludeNonTeleportable. Any global key works, not only boss keys, so a "
-                + "modded key can be named here.");
+                "defeated_eikthyr:meadows:2, defeated_gdking:blackforest:2, "
+                + "defeated_bonemass:swamp:2, defeated_dragon:mountain:2, "
+                + "defeated_goblinking:plains:2, defeated_queen:mistlands:2, "
+                + "defeated_fader:ashlands:2",
+                "boss:biome:multiplier, comma separated. Kill a biome's boss and the things "
+                + "that biome gives you stack better. The highest earned entry naming a biome "
+                + "wins, so entries never compound; one boss may name several biomes.\n"
+                + "Biomes: meadows, blackforest, ocean, swamp, mountain, plains, mistlands, "
+                + "ashlands, deepnorth, and all.\n"
+                + "Which biome an item belongs to is worked out from the game's own tables, "
+                + "not a list here: the vegetation table places a copper deposit in the Black "
+                + "Forest and the deposit says it drops copper ore, so copper ore is a Black "
+                + "Forest item. Creatures come through the spawn table and their drops, and "
+                + "bars and cooked food inherit from what they are made of. Items no table "
+                + "reaches stay at vanilla - see BiomeOverrides.\n"
+                + "An item found in several biomes belongs to the earliest, because that is "
+                + "where you first had to carry it home.\n"
+                + "Any global key works, not only boss keys, so a modded key can be named.");
 
             ProgressionOrder = config.Bind("Progression", "ProgressionOrder",
                 "defeated_eikthyr, defeated_gdking, defeated_bonemass, defeated_dragon, "
@@ -118,6 +123,26 @@ namespace Hoard
                 + "is the honest amount. Progression is meant to finish at Bonemass: by then "
                 + "you have portals, a cart and a longship, which is the game solving hauling "
                 + "by itself.");
+
+            LiftPortalRuleAt = config.Bind("Progression", "LiftPortalRuleAt", "swamp",
+                "The biome whose tier lifts the portal rule, so ore and bars start stacking "
+                + "when its boss falls. The Swamp, because Bonemass is where iron begins and "
+                + "by then the copper runs are behind you. Blank to keep the rule until "
+                + "IncludeNonTeleportable is turned on by hand.");
+
+            BiomeOverrides = config.Bind("Progression", "BiomeOverrides", "IronScrap:swamp, CopperOre:blackforest, SilverOre:mountain, "
+                + "BlackMetalScrap:plains, FineWood:meadows, SurtlingCore:blackforest, "
+                + "Amber:blackforest, Ruby:blackforest, Carrot:blackforest, Turnip:swamp, "
+                + "Onion:mountain, Barley:plains, Flax:plains, Chitin:ocean, Vineberry:mistlands",
+                "prefab:biome, comma separated, for items the game's tables cannot place.\n"
+                + "Iron is the reason this exists. Iron scrap is not placed in the world and "
+                + "is not dropped by anything that spawns in one - it is inside Sunken Crypts, "
+                + "and a location holds its prefab as a soft reference that is not loaded "
+                + "until the game wants it. Forcing dungeon interiors to load on the way into "
+                + "a world, to learn something that fits on this line, is not a trade worth "
+                + "making.\n"
+                + "The item list shows every item that ended up with no biome, so this line "
+                + "can be filled in from what is actually missing rather than guessed at.");
 
             DeferToUtangard = config.Bind("Progression", "DeferToUtangard", true,
                 "When Utangard is installed, ask it whether the group has earned a boss "

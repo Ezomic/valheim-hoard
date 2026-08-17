@@ -54,7 +54,7 @@ namespace Hoard
         /// </summary>
         public static void Rebuild()
         {
-            ItemGroups.Invalidate();
+            BiomeIndex.Invalidate();
             Progression.Invalidate();
             Apply();
         }
@@ -78,6 +78,7 @@ namespace Hoard
             if (db == null || db.m_items == null || db.m_items.Count == 0) return;
 
             Progression.Refresh();
+            BiomeIndex.Prepare();
 
             var changed = 0;
             var alreadyRight = 0;
@@ -101,7 +102,7 @@ namespace Hoard
                     Originals[prefab.name] = original;
                 }
 
-                var group = ItemGroups.Classify(prefab.name, shared);
+                var group = BiomeIndex.BiomeOf(prefab.name);
 
                 // Never from the current value - see the note on CopyOtherDB above.
                 var reason = SkipReason(prefab.name, shared, original);
@@ -184,7 +185,7 @@ namespace Hoard
 
             if (reason != PortalBlocked || !HoardConfig.ScaleWithProgression.Value) return reason;
 
-            var until = Progression.PendingFor(ItemGroups.Metal);
+            var until = Progression.PendingFor(Progression.PortalRuleOwner());
             return until == null ? reason : reason + " until " + until;
         }
 
@@ -207,7 +208,7 @@ namespace Hoard
             // or a metal tier is earned - the ramp is the intended way for it to open.
             if (!shared.m_teleportable
                 && !HoardConfig.IncludeNonTeleportable.Value
-                && !Progression.MetalUnlocked())
+                && !Progression.PortalRuleLifted())
                 return PortalBlocked;
 
             if (shared.m_itemType == ItemDrop.ItemData.ItemType.Trophy

@@ -171,8 +171,8 @@ namespace Hoard
         }
 
         /// <summary>
-        /// Whether metal has been earned, which is the one place a tier overrides a rule
-        /// rather than a number.
+        /// Whether the biome that owns the portal rule has been earned - the one place a tier
+        /// overrides a rule rather than a number.
         ///
         /// The portal rule is the mod's thesis - hauling ore by cart and boat is pacing, not
         /// an oversight - and a flat IncludeNonTeleportable is a blunt way to hold it. Making
@@ -181,17 +181,27 @@ namespace Hoard
         /// iron age you have already paid it. IncludeNonTeleportable stays as the switch for
         /// anyone who disagrees and does not want to wait.
         /// </summary>
-        public static bool MetalUnlocked()
+        public static bool PortalRuleLifted()
         {
             if (!HoardConfig.ScaleWithProgression.Value) return false;
 
+            var owner = PortalRuleOwner();
+            if (string.IsNullOrEmpty(owner)) return false;
+
             foreach (var tier in Tiers())
             {
-                if (tier.Group != ItemGroups.Metal && tier.Group != ItemGroups.Everything) continue;
+                if (tier.Group != owner && tier.Group != BiomeIndex.Everything) continue;
                 if (Earned(tier.BossKey)) return true;
             }
 
             return false;
+        }
+
+        /// <summary>The biome whose tier lifts the portal rule - the Swamp, by default.</summary>
+        public static string PortalRuleOwner()
+        {
+            var owner = HoardConfig.LiftPortalRuleAt.Value;
+            return owner == null ? "" : owner.Trim().ToLowerInvariant();
         }
 
         /// <summary>Whether any tier names this group at all, earned or not.</summary>
@@ -205,7 +215,7 @@ namespace Hoard
 
         private static bool Applies(Tier tier, string group)
         {
-            return tier.Group == group || tier.Group == ItemGroups.Everything;
+            return tier.Group == group || tier.Group == BiomeIndex.Everything;
         }
 
         /// <summary>
@@ -310,11 +320,11 @@ namespace Hoard
                 }
 
                 var group = parts[1].Trim().ToLowerInvariant();
-                if (Array.IndexOf(ItemGroups.All, group) < 0 && group != ItemGroups.Everything)
+                if (Array.IndexOf(BiomeIndex.All, group) < 0 && group != BiomeIndex.Everything)
                 {
                     HoardPlugin.Log.LogWarning(
                         "Ignoring tier '" + text + "': '" + group + "' is not one of "
-                        + string.Join(", ", ItemGroups.All) + ", " + ItemGroups.Everything + ".");
+                        + string.Join(", ", BiomeIndex.All) + ", " + BiomeIndex.Everything + ".");
                     continue;
                 }
 
@@ -337,14 +347,14 @@ namespace Hoard
                 return "flat:" + HoardConfig.StackMultiplier.Value.ToString(CultureInfo.InvariantCulture);
 
             var sb = new System.Text.StringBuilder();
-            foreach (var group in ItemGroups.All)
+            foreach (var group in BiomeIndex.All)
             {
                 sb.Append(group).Append(':')
                   .Append(MultiplierFor(group).ToString(CultureInfo.InvariantCulture))
                   .Append('|');
             }
 
-            return sb.Append(MetalUnlocked() ? "metal-on" : "metal-off").ToString();
+            return sb.Append(PortalRuleLifted() ? "portal-on" : "portal-off").ToString();
         }
 
         /// <summary>The earned tiers, for the item list header.</summary>
@@ -355,7 +365,7 @@ namespace Hoard
             // Only groups some tier can actually raise. Listing the rest at 1x reads as a
             // promise that a boss will come for them, and with the default table none will.
             var sb = new System.Text.StringBuilder();
-            foreach (var group in ItemGroups.All)
+            foreach (var group in BiomeIndex.All)
             {
                 if (!HasTier(group)) continue;
 

@@ -108,13 +108,15 @@ namespace Hoard
 
         private static string Build(List<Row> rows)
         {
-            // Group first, because the group is what a boss raises: someone asking "what did
+            // Biome first, because the biome is what a boss raises: someone asking "what did
             // Eikthyr just do for me" wants those items adjacent, and someone asking about one
-            // item finds it by searching rather than by scrolling.
+            // item finds it by searching rather than by scrolling. It also puts every item the
+            // tables could not place together at the bottom, which is the list BiomeOverrides
+            // is filled in from.
             rows.Sort((a, b) =>
             {
-                var byGroup = Array.IndexOf(ItemGroups.All, a.Group)
-                              .CompareTo(Array.IndexOf(ItemGroups.All, b.Group));
+                var byGroup = Array.IndexOf(BiomeIndex.All, a.Group)
+                              .CompareTo(Array.IndexOf(BiomeIndex.All, b.Group));
                 if (byGroup != 0) return byGroup;
 
                 return string.Compare(a.Prefab, b.Prefab, StringComparison.OrdinalIgnoreCase);
@@ -165,7 +167,7 @@ namespace Hoard
                 });
             }
 
-            var headers = new[] { "Prefab", "Name", "Type", "Group", "Stack", "Weight", "Status" };
+            var headers = new[] { "Prefab", "Name", "Type", "Biome", "Stack", "Weight", "Status" };
             var widths = new int[headers.Length];
             for (var i = 0; i < headers.Length; i++) widths[i] = headers[i].Length;
             foreach (var row in cells)
@@ -185,6 +187,22 @@ namespace Hoard
             sb.AppendLine("  death will raise that group.");
             sb.AppendLine();
             sb.AppendLine("  Earned so far: " + Progression.Describe());
+            sb.AppendLine();
+            sb.AppendLine("  Biome index: " + BiomeIndex.Count + " item(s) placed from the game's own"
+                          + " tables" + (BiomeIndex.Complete ? "." : ", INCOMPLETE - no world loaded yet."));
+
+            // The ones no table could reach, and only the ones it would matter for: an item
+            // that does not stack in vanilla is never going to be raised whatever biome it is
+            // from, so listing it here would bury the handful that need an override.
+            var unplaced = 0;
+            foreach (var row in rows)
+                if (row.Group == BiomeIndex.None && row.OriginalStack > 1) unplaced++;
+
+            if (unplaced > 0)
+                sb.AppendLine("  " + unplaced + " stackable item(s) have no biome and stay at vanilla."
+                              + " They are the '" + BiomeIndex.None + "' rows at the bottom;"
+                              + " BiomeOverrides is how you place one.");
+
             sb.AppendLine();
             sb.AppendLine("  Settings: StackMultiplier " + Number(HoardConfig.StackMultiplier.Value)
                           + ", StackCap " + HoardConfig.StackCap.Value
