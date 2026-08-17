@@ -7,6 +7,38 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.9.2] — 2026-08-17
+
+### Added
+
+- **An item list, written beside the config on every run** —
+  `ezomic.valheim.hoard.items.txt`. Every item in the game, its vanilla stack size and
+  weight, what Hoard made them, and which rule left it alone when it did nothing. Off with
+  `WriteItemList = false`.
+
+  `ExcludeItems` takes prefab names and prefab names are not guessable — raspberries are
+  `Raspberry` and a draugr's arrow is `draugr_arrow` — so a per-item setting without a list
+  beside it is a setting nobody can spell. It doubles as the answer to "why did this item
+  not change", which is the only question a mod like this ever gets, and it answers it
+  without asking anyone to turn on `Verbose` and read a log.
+
+  The rows are built by the tuning pass as it runs rather than by a second walk over the
+  database. A separate walk would be a second copy of the eligibility rules, and the first
+  thing it would do is disagree with the real one.
+
+### Fixed
+
+- **Weights are written with a decimal point on every machine.** `float.ToString` follows
+  the machine's locale, so on a Dutch install resin came out as `0,3` — a comma in a file
+  whose other numbers come from a `.cfg` that uses points, sitting next to a column of
+  integers. Both the item list and the `Verbose` log now format invariantly.
+
+### Changed
+
+- The pass logs three counts rather than two: changed, already at those values, and left
+  alone. They add up to the item count now. `Retuned 0` on the second setup of a session
+  reads like a failure until you know the other items were already at the right numbers.
+
 ## [0.9.1] — 2026-08-17
 
 ### Core is optional

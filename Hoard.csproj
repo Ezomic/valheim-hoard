@@ -5,7 +5,7 @@
     <AssemblyName>Hoard</AssemblyName>
     <RootNamespace>Hoard</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.9.1</Version>
+    <Version>0.9.2</Version>
     <Authors>Robbin Thijssen</Authors>
     <Company>Thijssen Software</Company>
     <Product>Hoard</Product>
@@ -28,6 +28,9 @@
   <ItemGroup>
     <Reference Include="assembly_valheim"><HintPath>$(ManagedDir)\assembly_valheim.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="assembly_utils"><HintPath>$(ManagedDir)\assembly_utils.dll</HintPath><Private>false</Private></Reference>
+    <!-- Localization lives here rather than in assembly_valheim. Used for one column of the
+         generated item list, and read defensively - see StackTuner.DisplayName. -->
+    <Reference Include="assembly_guiutils"><HintPath>$(ManagedDir)\assembly_guiutils.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>

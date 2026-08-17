@@ -72,9 +72,35 @@ Solo, none of that applies and Core is not needed at all.
 | `IncludeNonTeleportable` | `false` | Also affect ore, bars and anything portal-blocked |
 | `IncludeTrophies` | `true` | Also affect trophies |
 | `ExcludeItems` | | Comma-separated prefab names to skip entirely |
+| `WriteItemList` | `true` | Write the item list described below beside the `.cfg` |
 | `Verbose` | `false` | Log every item that changed |
 
 A value already written to the `.cfg` beats a new default in code — change the `.cfg`.
+
+## The item list
+
+`BepInEx\config\ezomic.valheim.hoard.items.txt`, rewritten on every run.
+
+`ExcludeItems` takes prefab names, and prefab names are not guessable — copper ore is
+`CopperOre` but raspberries are `Raspberry` and a draugr's arrow is `draugr_arrow`. So the
+mod writes down every item it saw, what it did to each one, and which rule stopped it when
+it did nothing:
+
+```
+Prefab       Name          Type        Stack       Weight  Left alone because
+Wood         Wood          Material    50 -> 100   2
+CopperOre    Copper Ore    Material    30          10      portal-blocked
+SwordIron    Iron Sword    OneHanded   1           0.8     equipment
+```
+
+An arrow means Hoard changed that value. A single number means it did not, and the last
+column says why. The header carries the settings that pass ran under and a count of each
+reason, so `equipment 677, portal-blocked 22` is the whole safety story at a glance.
+
+This is also the answer to "why did this item not change", which is the only question a mod
+like this ever gets asked. The rows are built by the tuning pass itself rather than by a
+second walk over the database — a separate walk would be a second copy of the eligibility
+rules, and the first thing it would do is disagree with the real one.
 
 ## Building
 
@@ -91,7 +117,9 @@ into the shared play profile with `valheim-own-profile\build-all.ps1`.
 2. **Copper ore should still cap at 30** — unchanged, because it cannot be teleported.
 3. Weight per item should be exactly vanilla.
 4. A sword or axe should still not stack.
-5. Set `Verbose = true` once and read the log if a specific item looks wrong.
+5. Open `ezomic.valheim.hoard.items.txt` if a specific item looks wrong — it names every
+   item and the rule that left it alone. `Verbose = true` is for watching a single pass
+   happen in the log; the file is the better answer to a question about one item.
 
 ## Author
 
