@@ -137,9 +137,12 @@ namespace Hoard
                 }
                 else if (row.Note.Length > 0)
                 {
+                    // By prefix, because a rule may say when it lifts - "portal-blocked until
+                    // defeated_bonemass" is still the portal rule and belongs in its tally.
+                    var reason = Reason(row.Note);
                     int n;
-                    counts.TryGetValue(row.Note, out n);
-                    counts[row.Note] = n + 1;
+                    counts.TryGetValue(reason, out n);
+                    counts[reason] = n + 1;
                 }
                 else if (row.Stack != row.OriginalStack || row.Weight != row.OriginalWeight)
                 {
@@ -249,6 +252,15 @@ namespace Hoard
         private static string Number(float value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>The bare rule a note begins with, so qualified notes still tally.</summary>
+        private static string Reason(string note)
+        {
+            foreach (var reason in ReasonOrder)
+                if (note.StartsWith(reason, StringComparison.Ordinal)) return reason;
+
+            return note;
         }
 
         private static int Total(Dictionary<string, int> counts)

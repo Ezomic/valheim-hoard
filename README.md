@@ -37,11 +37,12 @@ anything. So stacks start at vanilla and each boss raises **one group**:
 | --- | --- | --- |
 | Eikthyr | `building` | anything the Hammer asks for — wood, stone, resin |
 | The Elder | `farming` | anything the Cultivator asks for — seeds and crops |
-| Bonemass | `metal` | anything a portal refuses — ore and bars |
-| Moder | `ammo` | arrows, bolts, bait |
-| Yagluth | `food` | everything consumable |
-| The Queen | `trophy` | trophies |
-| Fader | `other` | the rest — amber, eggs, monster drops, craft materials |
+| Bonemass | `metal` and `trophy` | anything a portal refuses, plus trophies |
+
+**That is the whole table, and the gaps are the point.** Ammo, food and the general run of
+craft materials have no entry and stay at vanilla forever. A stack mod that eventually
+doubles everything is just a slower version of the x10 one; these three are the hauling that
+is genuinely repetitive, and the rest was never the problem.
 
 **The groups are read off the game's own systems, not a list in this mod.** Building material
 is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds

@@ -7,14 +7,30 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.10.1] — 2026-08-17
+
+### The table is shorter on purpose
+
+Ammo, food and the catch-all group lost their tiers, and trophies moved to Bonemass. Three
+entries remain: Eikthyr raises building material, The Elder the crops, Bonemass the metal
+and the trophies.
+
+A group with no entry stays at vanilla forever, and most of the game's stackables are meant
+to. A mod that eventually doubles everything is a slower version of the one that doubles it
+on day one; what is left here is the hauling that is actually repetitive.
+
+- **The portal rule now says when it lifts.** Ore read `portal-blocked`, which is a
+  half-truth once a metal tier exists — it now reads `portal-blocked until
+  defeated_bonemass`. Tallies match on the rule, so a qualified note still counts under it.
+- **"Earned so far" lists only groups a tier can reach.** Printing the others at 1x read as
+  a promise that some boss would come for them, and with this table none will.
+
 ## [0.10.0] — 2026-08-17
 
 ### Each boss raises one kind of stack
 
-Stacks now start at vanilla and each boss unlocks one group: Eikthyr the building material,
-The Elder the crops, Bonemass the metal, Moder the ammo, Yagluth the food, The Queen the
-trophies, Fader everything else. `ScaleWithProgression = false` restores the old flat
-multiplier.
+Stacks now start at vanilla and each boss unlocks one group. `ScaleWithProgression = false`
+restores the old flat multiplier.
 
 A flat multiplier cannot tell the two halves of this mod's own argument apart. Meadows
 scarcity is the game teaching you to plan; the ninth trip to the same copper deposit is not

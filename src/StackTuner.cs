@@ -157,7 +157,7 @@ namespace Hoard
                     group,
                     original.Stack, shared.m_maxStackSize,
                     original.Weight, shared.m_weight,
-                    reason ?? (pending != null ? ItemDump.Awaiting + pending : null)));
+                    Note(reason, pending, group)));
             }
 
             // All three counts, because they add up to the item count and the old pair did
@@ -168,6 +168,24 @@ namespace Hoard
                 + " already correct; left " + skipped + " alone.");
 
             ItemDump.Write(rows);
+        }
+
+        /// <summary>
+        /// What the item list's last column says.
+        ///
+        /// The portal rule gets special handling because on its own it is a half-truth: ore
+        /// says "portal-blocked" and stops there, when the thing the reader wants to know is
+        /// that Bonemass lifts it. A rule that will be lifted should say when.
+        /// </summary>
+        private static string Note(string reason, string pending, string group)
+        {
+            if (reason == null)
+                return pending != null ? ItemDump.Awaiting + pending : null;
+
+            if (reason != PortalBlocked || !HoardConfig.ScaleWithProgression.Value) return reason;
+
+            var until = Progression.PendingFor(ItemGroups.Metal);
+            return until == null ? reason : reason + " until " + until;
         }
 
         /// <summary>

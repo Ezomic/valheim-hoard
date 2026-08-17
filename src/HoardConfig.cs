@@ -83,11 +83,12 @@ namespace Hoard
 
             ProgressionTiers = config.Bind("Progression", "ProgressionTiers",
                 "defeated_eikthyr:building:2, defeated_gdking:farming:2, "
-                + "defeated_bonemass:metal:2, defeated_dragon:ammo:2, "
-                + "defeated_goblinking:food:2, defeated_queen:trophy:2, "
-                + "defeated_fader:other:2",
+                + "defeated_bonemass:metal:2, defeated_bonemass:trophy:2",
                 "boss:group:multiplier, comma separated. The highest earned entry naming a "
-                + "group wins, so entries never compound.\n"
+                + "group wins, so entries never compound. One boss may name several groups.\n"
+                + "Ammo, food and everything else are deliberately absent: a group with no "
+                + "entry stays at vanilla forever, and most of the game's stackables are "
+                + "meant to. What is here is the hauling that is genuinely repetitive.\n"
                 + "Groups: building (anything the Hammer asks for), farming (anything the "
                 + "Cultivator asks for), metal (anything a portal refuses), food, ammo, "
                 + "trophy, other, and all.\n"

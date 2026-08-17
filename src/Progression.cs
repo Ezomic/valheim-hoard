@@ -133,6 +133,15 @@ namespace Hoard
             return false;
         }
 
+        /// <summary>Whether any tier names this group at all, earned or not.</summary>
+        private static bool HasTier(string group)
+        {
+            foreach (var tier in Tiers())
+                if (Applies(tier, group)) return true;
+
+            return false;
+        }
+
         private static bool Applies(Tier tier, string group)
         {
             return tier.Group == group || tier.Group == ItemGroups.Everything;
@@ -282,16 +291,20 @@ namespace Hoard
         {
             if (!HoardConfig.ScaleWithProgression.Value) return "off - one flat multiplier";
 
+            // Only groups some tier can actually raise. Listing the rest at 1x reads as a
+            // promise that a boss will come for them, and with the default table none will.
             var sb = new System.Text.StringBuilder();
             foreach (var group in ItemGroups.All)
             {
+                if (!HasTier(group)) continue;
+
                 if (sb.Length > 0) sb.Append(", ");
                 sb.Append(group).Append(' ')
                   .Append(MultiplierFor(group).ToString("0.##", CultureInfo.InvariantCulture))
                   .Append('x');
             }
 
-            return sb.ToString();
+            return sb.Length == 0 ? "nothing - no tiers are configured" : sb.ToString();
         }
     }
 }
