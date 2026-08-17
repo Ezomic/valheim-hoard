@@ -27,7 +27,7 @@ namespace Hoard
         public const string PluginName = "Hoard";
         // Pre-1.0 on purpose: 1.0.0 is reserved for the first version that has been played
         // and published. See CHANGELOG.md.
-        public const string PluginVersion = "0.11.0";
+        public const string PluginVersion = "0.11.1";
         public const string PluginAuthor = "Robbin Thijssen";
 
         /// <summary>Core's plugin GUID. Optional - see TryRegisterWithCore.</summary>

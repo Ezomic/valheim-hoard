@@ -44,27 +44,17 @@ craft materials have no entry and stay at vanilla forever. A stack mod that even
 doubles everything is just a slower version of the x10 one; these three are the hauling that
 is genuinely repetitive, and the rest was never the problem.
 
-### Every later boss adds ten percent
+### It finishes at Bonemass, on purpose
 
-Only three bosses unlock a group, so on its own the table would be finished by Bonemass and
-the back half of the game would get a reward that has stopped paying. So **every boss after
-the one that unlocked a group raises it again by 10%, compounding** — including the four that
-unlock nothing of their own.
+Nothing after Bonemass changes a stack size, and that is the design rather than a gap. By
+then you have portals, a cart and a longship — the game has solved hauling by itself, and a
+reward table that keeps paying past the point where the problem exists is padding.
 
-| After | building | farming | metal & trophy |
-| --- | --- | --- | --- |
-| Eikthyr | 2 | — | — |
-| The Elder | 2.2 | 2 | — |
-| Bonemass | 2.42 | 2.2 | 2 |
-| Moder | 2.66 | 2.42 | 2.2 |
-| Yagluth | 2.93 | 2.66 | 2.42 |
-| The Queen | 3.22 | 2.93 | 2.66 |
-| Fader | 3.54 | 3.22 | 2.93 |
-
-Ten percent is small enough that it never becomes the x10 mod by accident — six of them on a
-doubled stack is 3.5x, and `StackCap` is still the ceiling over all of it. `ProgressionStep =
-0` turns it off and leaves flat tiers. The order lives in `ProgressionOrder`; a key that is
-not listed still unlocks its own group, it just never counts as later than anything.
+`ProgressionStep` will make every later boss raise the earlier groups again by a percentage,
+compounding, if you want the back half of the game to keep moving. It is **0 by default**,
+because ten extra wood in a slot is not a reward anyone can feel, because it produces stack
+sizes like 133 that read as a bug beside vanilla's round numbers, and because it drifts past
+the flat 2x this mod argues is the honest amount.
 
 **The groups are read off the game's own systems, not a list in this mod.** Building material
 is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds
@@ -145,6 +135,8 @@ Solo, none of that applies and Core is not needed at all.
 | `ScaleWithProgression` | `true` | Each boss raises one group. Off falls back to `StackMultiplier` |
 | `ProgressionBase` | `1` | Multiplier for a group no boss has unlocked — 1 is vanilla |
 | `ProgressionTiers` | see above | `boss:group:multiplier`, comma separated |
+| `ProgressionStep` | `0` | Later bosses re-raise earlier groups by this fraction, compounding |
+| `ProgressionOrder` | the seven bosses | What "later" means; idle while `ProgressionStep` is 0 |
 | `DeferToUtangard` | `true` | Ask Utangard what the group has earned, when it is installed |
 | `StackMultiplier` | `2` | Flat multiplier, used only when `ScaleWithProgression` is off |
 | `StackCap` | `200` | Hard ceiling on the result |

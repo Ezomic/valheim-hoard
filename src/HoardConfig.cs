@@ -105,15 +105,19 @@ namespace Hoard
                 + "defeated_goblinking, defeated_queen, defeated_fader",
                 "The order bosses come in, which is what makes ProgressionStep mean "
                 + "'later'. A key not named here still unlocks its own group; it just never "
-                + "counts as later than anything.");
+                + "counts as later than anything.\n"
+                + "Does nothing while ProgressionStep is 0, which is the default.");
 
-            ProgressionStep = config.Bind("Progression", "ProgressionStep", 0.1f,
-                "How much every boss after the one that unlocked a group raises it again. "
-                + "0.1 is ten percent, compounding, so building unlocked at Eikthyr is 2x, "
-                + "2.2x once The Elder is down, 2.42x after Bonemass.\n"
-                + "This is what the late bosses are for. Only three of them unlock a group, "
-                + "and without this the whole feature would be over by Bonemass - a reward "
-                + "table that stops paying halfway through the game. Set 0 for flat tiers.");
+            ProgressionStep = config.Bind("Progression", "ProgressionStep", 0f,
+                "How much every boss after the one that unlocked a group raises it again, "
+                + "compounding. 0.1 would make building 2x at Eikthyr, 2.2x once The Elder "
+                + "is down, 2.42x after Bonemass, 3.54x with all seven dead.\n"
+                + "Off, because ten extra wood in a slot is not a reward anyone can feel, "
+                + "and because it produces stack sizes like 133 that read as a bug next to "
+                + "vanilla's round numbers. It also drifts past the flat 2x this mod argues "
+                + "is the honest amount. Progression is meant to finish at Bonemass: by then "
+                + "you have portals, a cart and a longship, which is the game solving hauling "
+                + "by itself.");
 
             DeferToUtangard = config.Bind("Progression", "DeferToUtangard", true,
                 "When Utangard is installed, ask it whether the group has earned a boss "

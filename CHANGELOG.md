@@ -7,9 +7,29 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.11.1] — 2026-08-17
+
+### Progression finishes at Bonemass
+
+`ProgressionStep` now defaults to **0**, so nothing after Bonemass changes a stack size.
+The mechanism from 0.11.0 stays as a knob; it is simply off.
+
+Three reasons it should not be the default, and none of them is that it did not work:
+
+- **Ten percent is imperceptible.** Wood going 100 to 110 is not a reward anyone feels, and
+  it lands at the moment a boss dies, when there is a great deal else to notice.
+- **The numbers read as a bug.** Vanilla stacks are round — 20, 30, 50, 100. Compounding
+  produces 121, 133, 146, 177, which look like a fault rather than a design.
+- **It drifts past the honest amount.** Building ended at 3.54x, well beyond the flat 2x
+  this mod ships and defends. A narrow table that quietly widens forever is the x10 mod
+  taking the long way round.
+
+Ending at Bonemass is a complete design and not an unfinished one: by then you have
+portals, a cart and a longship, which is the game solving hauling on its own.
+
 ## [0.11.0] — 2026-08-17
 
-### Every later boss adds ten percent
+### Every later boss adds ten percent (off by default since 0.11.1)
 
 A boss now raises the group it is assigned **and** every group unlocked before it, by
 `ProgressionStep` — ten percent, compounding. Building unlocked at Eikthyr is 2x, 2.2x once
