@@ -20,7 +20,9 @@ namespace Hoard
     {
         public const string PluginGuid = "ezomic.valheim.hoard";
         public const string PluginName = "Hoard";
-        public const string PluginVersion = "1.0.0";
+        // Pre-1.0 on purpose: 1.0.0 is reserved for the first version that has been played
+        // and published. See CHANGELOG.md.
+        public const string PluginVersion = "0.9.1";
         public const string PluginAuthor = "Robbin Thijssen";
 
         /// <summary>Core's plugin GUID. Optional - see TryRegisterWithCore.</summary>

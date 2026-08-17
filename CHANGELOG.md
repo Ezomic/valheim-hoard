@@ -3,9 +3,31 @@
 Notable changes to Hoard. Format follows [Keep a Changelog](https://keepachangelog.com),
 and the mod uses [semantic versioning](https://semver.org).
 
-## [1.0.0] — 2026-08-16
+Nothing here has been released yet. The numbers below are development builds, and **1.0.0 is
+reserved for the first version that has actually been played and published** — a 1.0 asserts
+a mod works in a game, not merely that it compiles and loads.
 
-First release.
+## [0.9.1] — 2026-08-17
+
+### Core is optional
+
+- **Core is now a soft dependency rather than a hard one.** Hoard installs and runs on its
+  own, and the Thunderstore package no longer drags Core in with it. Present, Core is used;
+  absent, nothing here is degraded.
+- What is given up standing alone is the **version gate**, not the mod. Item data that
+  differs between two ends desyncs inventories, and without Core nothing reports that. The
+  `ObjectDB.CopyOtherDB` patch still puts a joining client on the server's numbers, which
+  covers the common case on its own. Solo, none of it applies.
+- The registration call sits in its own method that is **never inlined**, because the JIT
+  resolves the assemblies a method needs when it first compiles that method. A Core call
+  written directly into `Awake` would drag the assembly in before the installed-check could
+  prevent it, and the missing-assembly exception would land during plugin load — which is
+  precisely the failure the soft dependency exists to avoid.
+
+## [0.9.0] — 2026-08-16
+
+First complete build. Carried the number 1.0.0 until the release policy above was settled;
+it was never published under it.
 
 ### Stacks
 
