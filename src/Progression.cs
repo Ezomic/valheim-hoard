@@ -49,6 +49,7 @@ namespace Hoard
         public static void Invalidate()
         {
             _tiers = null;
+            _order = null;
             _signature = null;
         }
 
@@ -68,19 +69,79 @@ namespace Hoard
             return true;
         }
 
-        /// <summary>The multiplier this group has earned, or the base when it has earned none.</summary>
+        /// <summary>
+        /// The multiplier this group has earned, or the base when it has earned none.
+        ///
+        /// Two parts. A tier unlocks the group outright, and then every boss that comes after
+        /// that one in the order raises it again by ProgressionStep, compounding.
+        ///
+        /// The second part is what the late bosses are for. Only three of the seven unlock a
+        /// group, so without it the whole feature is over by Bonemass and the back half of
+        /// the game gets a reward table that has stopped paying. Ten percent is small enough
+        /// that it never turns into the x10 mod by accident: six of them on a doubled stack
+        /// is 3.5x, and StackCap is still the ceiling over all of it.
+        /// </summary>
         public static float MultiplierFor(string group)
         {
             var best = HoardConfig.ProgressionBase.Value;
+            var unlockedAt = -1;
 
             foreach (var tier in Tiers())
             {
                 if (!Applies(tier, group)) continue;
                 if (!Earned(tier.BossKey)) continue;
-                if (tier.Multiplier > best) best = tier.Multiplier;
+                if (tier.Multiplier <= best) continue;
+
+                best = tier.Multiplier;
+                unlockedAt = OrderIndex(tier.BossKey);
             }
 
+            // Nothing has unlocked it, so nothing compounds on top. A group still at the base
+            // is not "unlocked at zero percent", it is untouched.
+            if (unlockedAt < 0) return best;
+
+            var step = HoardConfig.ProgressionStep.Value;
+            if (step <= 0f) return best;
+
+            var order = Order();
+            for (var i = unlockedAt + 1; i < order.Length; i++)
+                if (Earned(order[i])) best *= 1f + step;
+
             return best;
+        }
+
+        /// <summary>
+        /// Where a boss sits in the configured order, or -1 when it is not in it.
+        ///
+        /// -1 rather than "first" or "last" on purpose: an unlisted key still unlocks its own
+        /// group, it simply never counts as before or after anything. That is the honest
+        /// answer for a modded boss key somebody added to the tier table and not the order,
+        /// and it fails by doing less rather than by silently reordering the vanilla ones.
+        /// </summary>
+        private static int OrderIndex(string bossKey)
+        {
+            return Array.IndexOf(Order(), bossKey);
+        }
+
+        private static string[] _order;
+        private static string _orderFrom;
+
+        private static string[] Order()
+        {
+            var raw = HoardConfig.ProgressionOrder.Value ?? "";
+            if (_order != null && raw == _orderFrom) return _order;
+
+            var parts = raw.Split(',');
+            var order = new List<string>(parts.Length);
+            foreach (var part in parts)
+            {
+                var key = part.Trim().ToLowerInvariant();
+                if (key.Length > 0) order.Add(key);
+            }
+
+            _orderFrom = raw;
+            _order = order.ToArray();
+            return _order;
         }
 
         /// <summary>

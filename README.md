@@ -44,6 +44,28 @@ craft materials have no entry and stay at vanilla forever. A stack mod that even
 doubles everything is just a slower version of the x10 one; these three are the hauling that
 is genuinely repetitive, and the rest was never the problem.
 
+### Every later boss adds ten percent
+
+Only three bosses unlock a group, so on its own the table would be finished by Bonemass and
+the back half of the game would get a reward that has stopped paying. So **every boss after
+the one that unlocked a group raises it again by 10%, compounding** — including the four that
+unlock nothing of their own.
+
+| After | building | farming | metal & trophy |
+| --- | --- | --- | --- |
+| Eikthyr | 2 | — | — |
+| The Elder | 2.2 | 2 | — |
+| Bonemass | 2.42 | 2.2 | 2 |
+| Moder | 2.66 | 2.42 | 2.2 |
+| Yagluth | 2.93 | 2.66 | 2.42 |
+| The Queen | 3.22 | 2.93 | 2.66 |
+| Fader | 3.54 | 3.22 | 2.93 |
+
+Ten percent is small enough that it never becomes the x10 mod by accident — six of them on a
+doubled stack is 3.5x, and `StackCap` is still the ceiling over all of it. `ProgressionStep =
+0` turns it off and leaves flat tiers. The order lives in `ProgressionOrder`; a key that is
+not listed still unlocks its own group, it just never counts as later than anything.
+
 **The groups are read off the game's own systems, not a list in this mod.** Building material
 is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds
 lands in the right group by itself. Metal is whatever the game refuses to send through a

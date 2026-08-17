@@ -27,6 +27,8 @@ namespace Hoard
         public static ConfigEntry<bool> ScaleWithProgression;
         public static ConfigEntry<float> ProgressionBase;
         public static ConfigEntry<string> ProgressionTiers;
+        public static ConfigEntry<string> ProgressionOrder;
+        public static ConfigEntry<float> ProgressionStep;
         public static ConfigEntry<bool> DeferToUtangard;
         public static ConfigEntry<string> ExcludeItems;
         public static ConfigEntry<bool> WriteItemList;
@@ -97,6 +99,21 @@ namespace Hoard
                 + "An earned metal tier also lifts the portal rule - see "
                 + "IncludeNonTeleportable. Any global key works, not only boss keys, so a "
                 + "modded key can be named here.");
+
+            ProgressionOrder = config.Bind("Progression", "ProgressionOrder",
+                "defeated_eikthyr, defeated_gdking, defeated_bonemass, defeated_dragon, "
+                + "defeated_goblinking, defeated_queen, defeated_fader",
+                "The order bosses come in, which is what makes ProgressionStep mean "
+                + "'later'. A key not named here still unlocks its own group; it just never "
+                + "counts as later than anything.");
+
+            ProgressionStep = config.Bind("Progression", "ProgressionStep", 0.1f,
+                "How much every boss after the one that unlocked a group raises it again. "
+                + "0.1 is ten percent, compounding, so building unlocked at Eikthyr is 2x, "
+                + "2.2x once The Elder is down, 2.42x after Bonemass.\n"
+                + "This is what the late bosses are for. Only three of them unlock a group, "
+                + "and without this the whole feature would be over by Bonemass - a reward "
+                + "table that stops paying halfway through the game. Set 0 for flat tiers.");
 
             DeferToUtangard = config.Bind("Progression", "DeferToUtangard", true,
                 "When Utangard is installed, ask it whether the group has earned a boss "

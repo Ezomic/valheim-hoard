@@ -7,6 +7,34 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.11.0] — 2026-08-17
+
+### Every later boss adds ten percent
+
+A boss now raises the group it is assigned **and** every group unlocked before it, by
+`ProgressionStep` — ten percent, compounding. Building unlocked at Eikthyr is 2x, 2.2x once
+The Elder is down, 2.42x after Bonemass, and 3.54x with everything dead.
+
+Only three of the seven bosses unlock a group, so without this the whole feature was over
+by Bonemass and the back half of the game got a reward table that had stopped paying. It
+also gives the four bosses that unlock nothing something to do, without inventing a
+category for them or reaching for a second axis like weight.
+
+Ten percent is small enough that it never turns into the x10 mod by accident: six of them
+on a doubled stack is 3.5x, and `StackCap` still caps all of it. `ProgressionStep = 0`
+restores flat tiers.
+
+- **`ProgressionOrder` is new**, because "later" needs an order and the tier table never had
+  one. A key that is not listed still unlocks its own group; it simply never counts as
+  before or after anything, which is the honest answer for a modded boss key somebody added
+  to the tiers and not the order.
+- A group still at the base multiplier does not compound. Untouched is untouched, not
+  "unlocked at zero percent".
+
+**Untested:** the compounding itself. The dev world has only `defeated_eikthyr`, so no run
+here has had two keys down at once — the unlock path and the retune when a key arrives are
+both verified live, the ten percent is verified only by reading it.
+
 ## [0.10.1] — 2026-08-17
 
 ### The table is shorter on purpose
