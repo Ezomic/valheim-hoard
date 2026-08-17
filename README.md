@@ -61,7 +61,18 @@ There is no table of items in this mod. Four routes, all reading the game's own 
   because that is when you could first make it. Barley is Plains, so flour is Plains, so
   dough is Plains, so bread is Plains — through a mill, a recipe and an oven in turn, none of
   it written down here. Every mead lands the same way, off the fermenter.
-- **`BiomeOverrides`** for the handful none of that reaches.
+- **Spawners.** A greydwarf nest or a surtling geyser is placed in a biome, and it is the
+  nest rather than the creature that the tables know about.
+- **Bosses place their own drops.** A boss prefab knows the global key its death sets, and
+  the tier table knows which biome that key belongs to, so Moder's trophy is a Mountain item
+  without either side naming it.
+- **`BiomeOverrides`** for the roots none of that reaches — ore deposits, dungeon loot, fish
+  and the trophies of creatures that only appear inside a location. Roots only: the recipe
+  pass turns each one into everything made from it.
+
+That lands **665 of 671 stackable items**. The six left over are crafting oddities —
+`AxeHead1`, `AxeHead2`, `BarrelRings`, `FireworksRocket_White`, `Ironpit`, `ScytheHandle` —
+left unplaced rather than guessed at, because a wrong biome is worse than vanilla.
 
 An item found in several biomes belongs to the **earliest**, because that is where you first
 had to carry it home. A crafted one takes the **latest** of its ingredients. Those two rules

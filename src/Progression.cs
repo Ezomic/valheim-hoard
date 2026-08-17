@@ -204,6 +204,22 @@ namespace Hoard
             return owner == null ? "" : owner.Trim().ToLowerInvariant();
         }
 
+        /// <summary>
+        /// The biome a boss key is tied to, or null. Used to place a boss's own drops: the
+        /// boss prefab knows which key its death sets, and this table knows which biome that
+        /// key belongs to, so its trophy lands in its own biome without being named anywhere.
+        /// </summary>
+        public static string BiomeFor(string bossKey)
+        {
+            if (string.IsNullOrEmpty(bossKey)) return null;
+
+            var key = bossKey.ToLowerInvariant();
+            foreach (var tier in Tiers())
+                if (tier.BossKey == key) return tier.Group;
+
+            return null;
+        }
+
         /// <summary>Whether any tier names this group at all, earned or not.</summary>
         private static bool HasTier(string group)
         {

@@ -139,6 +139,8 @@ namespace Hoard
                             Harvest(found, spawner.m_prefab, spawner.m_biome);
                 }
 
+            if (scene != null && scene.m_prefabs != null) Bosses(found, scene);
+
             // Before the conversions and recipes, not only after. An override is a root fact -
             // copper ore is Black Forest - and everything made from it should inherit that.
             // Applied last as well, so a hand-written answer still beats a derived one.
@@ -211,6 +213,27 @@ namespace Hoard
                     if (entry != null) Record(found, entry.m_prefab, index);
             }
 
+            // Spawners: a greydwarf nest, a surtling geyser, the skeleton piles in a crypt.
+            // The creature is not in the world's spawn table at all - the thing that makes it
+            // is - so without this every trophy and drop that only comes from a nest is
+            // invisible to the index.
+            foreach (var area in prefab.GetComponentsInChildren<SpawnArea>(true))
+            {
+                if (area == null || area.m_prefabs == null) continue;
+
+                foreach (var spawn in area.m_prefabs)
+                {
+                    if (spawn == null || spawn.m_prefab == null) continue;
+
+                    foreach (var drop in spawn.m_prefab.GetComponentsInChildren<CharacterDrop>(true))
+                    {
+                        if (drop == null || drop.m_drops == null) continue;
+                        foreach (var entry in drop.m_drops)
+                            if (entry != null) Record(found, entry.m_prefab, index);
+                    }
+                }
+            }
+
             foreach (var tree in prefab.GetComponentsInChildren<TreeBase>(true))
             {
                 if (tree == null) continue;
@@ -256,6 +279,50 @@ namespace Hoard
             }
 
             return moved;
+        }
+
+        /// <summary>
+        /// A boss's own drops - its trophy, and the thing you put on the sacrificial stones.
+        ///
+        /// Bosses are not in the spawn tables. They stand in a location that the world places
+        /// deliberately, so nothing else here can see them. But the boss prefab knows the
+        /// global key its death sets, and the tier table already says which biome that key
+        /// belongs to, so the two together place its drops in its own biome without either
+        /// side naming an item. Moder's trophy is a Mountain item because Moder's key is the
+        /// Mountain's key.
+        ///
+        /// It also means a modded boss added to ProgressionTiers brings its own drops with it.
+        /// </summary>
+        private static void Bosses(Dictionary<string, int> found, ZNetScene scene)
+        {
+            foreach (var prefab in scene.m_prefabs)
+            {
+                if (prefab == null) continue;
+
+                var character = prefab.GetComponent<Character>();
+                if (character == null || string.IsNullOrEmpty(character.m_defeatSetGlobalKey)) continue;
+
+                var biome = Progression.BiomeFor(character.m_defeatSetGlobalKey);
+                if (biome == null) continue;
+
+                var index = IndexOf(biome);
+                if (index < 0) continue;
+
+                foreach (var drop in prefab.GetComponentsInChildren<CharacterDrop>(true))
+                {
+                    if (drop == null || drop.m_drops == null) continue;
+                    foreach (var entry in drop.m_drops)
+                        if (entry != null) Record(found, entry.m_prefab, index);
+                }
+            }
+        }
+
+        private static int IndexOf(string biome)
+        {
+            for (var i = 0; i < Ordered.Length; i++)
+                if (Ordered[i].Key == biome) return i;
+
+            return -1;
         }
 
         /// <summary>

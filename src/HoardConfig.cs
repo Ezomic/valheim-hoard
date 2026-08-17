@@ -130,10 +130,56 @@ namespace Hoard
                 + "by then the copper runs are behind you. Blank to keep the rule until "
                 + "IncludeNonTeleportable is turned on by hand.");
 
-            BiomeOverrides = config.Bind("Progression", "BiomeOverrides", "IronScrap:swamp, CopperOre:blackforest, SilverOre:mountain, "
-                + "BlackMetalScrap:plains, FineWood:meadows, SurtlingCore:blackforest, "
-                + "Amber:blackforest, Ruby:blackforest, Carrot:blackforest, Turnip:swamp, "
-                + "Onion:mountain, Barley:plains, Flax:plains, Chitin:ocean, Vineberry:mistlands",
+            BiomeOverrides = config.Bind("Progression", "BiomeOverrides",
+                // Roots. Everything made from these is placed by the recipe pass, so this
+                // list is far shorter than the number of items it ends up accounting for.
+                "CopperOre:blackforest, SilverOre:mountain, IronScrap:swamp, IronOre:swamp, "
+                + "BlackMetalScrap:plains, FlametalOre:ashlands, FlametalOreNew:ashlands, "
+                + "Flametal:ashlands, FlametalNew:ashlands, CopperScrap:blackforest, "
+                + "BronzeScrap:blackforest, MoltenCore:swamp, YmirRemains:blackforest, "
+                + "FineWood:meadows, RoundLog:meadows, SurtlingCore:blackforest, "
+                // Foraged and farmed. The seeds and the cooked forms follow from these.
+                + "Carrot:blackforest, Turnip:swamp, Onion:mountain, Barley:plains, "
+                + "Flax:plains, Vineberry:mistlands, Honey:meadows, QueenBee:meadows, "
+                + "MushroomYellow:blackforest, MushroomBlue:mistlands, "
+                + "MushroomBzerker:mistlands, Fiddleheadfern:mistlands, Sap:mistlands, "
+                + "Tar:plains, WitheredBone:swamp, Wisp:mistlands, Larva:mistlands, "
+                // Chest and dungeon loot.
+                + "Amber:blackforest, AmberPearl:blackforest, Ruby:blackforest, "
+                + "SilverNecklace:mountain, GemstoneBlue:mistlands, GemstoneGreen:mistlands, "
+                + "GemstoneRed:mistlands, BlackCore:mistlands, DvergrKeyFragment:mistlands, "
+                + "DvergrNeedle:mistlands, Ectoplasm:mistlands, GroveHeartwood:mistlands, "
+                + "Thunderstone:mistlands, VegvisirShard_Bonemass:swamp, "
+                // Water. Fish are placed rather than derived; nothing spawns them from a table.
+                + "Fish1:ocean, Fish2:ocean, Fish3:ocean, Fish5:ocean, Fish6:ocean, "
+                + "Fish7:ocean, Fish8:ocean, Fish9:ocean, Fish4_cave:mountain, "
+                + "Fish10:ashlands, Fish11:ashlands, Fish12:ashlands, FishRaw:ocean, "
+                + "FishAnglerRaw:ocean, FreshSeaweed:ocean, Chitin:ocean, "
+                + "BonemawSerpentScale:ashlands, "
+                // Creatures that only come out of a location, so their drops are invisible.
+                + "TrophyForestTroll:blackforest, TrophySkeletonHildir:blackforest, "
+                + "TrophyGhost:swamp, TrophyDraugrFem:swamp, TrophySkeletonPoison:swamp, "
+                + "TrophySurtling:swamp, BlobVial:swamp, draugr_arrow:swamp, "
+                + "TrophyCultist:mountain, TrophyCultist_Hildir:mountain, TrophyUlv:mountain, "
+                + "WolfClaw:mountain, WolfHairBundle:mountain, "
+                + "TrophyGoblinShaman:plains, TrophyGoblinBruteBrosBrute:plains, "
+                + "TrophyGoblinBruteBrosShaman:plains, GoblinSpear:plains, JuteBlue:plains, "
+                + "JuteRed:plains, BombBlob_Tar:plains, "
+                + "TrophyGrowth:mistlands, TrophyKvastur:ashlands, TrophyCharredMage:ashlands, "
+                + "CuredSquirrelHamstring:mistlands, TurretBoltBone:mistlands, "
+                // Ashlands, which is almost entirely location work.
+                + "AsksvinEgg:ashlands, AsksvinCarrionNeck:ashlands, "
+                + "AsksvinCarrionPelvic:ashlands, AsksvinCarrionRibcage:ashlands, "
+                + "AsksvinCarrionSkull:ashlands, ChickenEgg:ashlands, ChickenMeat:ashlands, "
+                + "CharredCogwheel:ashlands, BellFragment:ashlands, Pot_Shard_Red:ashlands, "
+                + "PungentPebbles:ashlands, CandleWick:ashlands, FragrantBundle:ashlands, "
+                + "PowderedDragonEgg:ashlands, "
+                // Spices, each named after where it comes from.
+                + "SpiceForests:blackforest, SpiceMountains:mountain, SpicePlains:plains, "
+                + "SpiceOceans:ocean, SpiceMistlands:mistlands, SpiceAshlands:ashlands, "
+                // Seeds the crop recipes do not run backwards to, and the two odd consumables.
+                + "OnionSeeds:mountain, VineberrySeeds:mistlands, VineGreenSeeds:mistlands, "
+                + "FishingBait:ocean, MeadTrollPheromones:blackforest",
                 "prefab:biome, comma separated, for items the game's tables cannot place.\n"
                 + "Iron is the reason this exists. Iron scrap is not placed in the world and "
                 + "is not dropped by anything that spawns in one - it is inside Sunken Crypts, "

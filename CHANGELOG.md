@@ -7,6 +7,30 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.12.1] — 2026-08-17
+
+### Everything is placed
+
+**665 items placed, six left.** Two more derivations and a filled-in override list took the
+unplaced count from 122 to 6.
+
+- **Spawners.** A greydwarf nest, a surtling geyser, the skeleton piles in a crypt: the
+  creature is not in the world's spawn table, the thing that makes it is. Walking `SpawnArea`
+  finds them, which is where most of the missing trophies were.
+- **Bosses place their own drops.** A boss stands in a location so nothing else can see it,
+  but the boss prefab knows the global key its death sets and the tier table knows which
+  biome that key belongs to. Moder's trophy is a Mountain item because Moder's key is the
+  Mountain's key — neither side names an item, and a modded boss added to `ProgressionTiers`
+  brings its drops with it.
+- **`BiomeOverrides` now ships the roots** that live inside locations: ore deposits, dungeon
+  loot, dvergr and charred material, fish, and the trophies of creatures that only appear in
+  a location. Roots, not a full list — the recipe pass turns each one into everything made
+  from it, so cooked fish, chicken, spices and meads all placed themselves from these.
+
+The six that remain are `AxeHead1`, `AxeHead2`, `BarrelRings`, `FireworksRocket_White`,
+`Ironpit` and `ScytheHandle` — crafting oddities nobody hauls. They are unplaced rather than
+guessed at, because a wrong biome is worse than vanilla, and they stay at vanilla.
+
 ## [0.12.0] — 2026-08-17
 
 ### A boss raises the biome it guards
