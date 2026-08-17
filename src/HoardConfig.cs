@@ -24,6 +24,10 @@ namespace Hoard
         public static ConfigEntry<float> WeightMultiplier;
         public static ConfigEntry<bool> IncludeNonTeleportable;
         public static ConfigEntry<bool> IncludeTrophies;
+        public static ConfigEntry<bool> ScaleWithProgression;
+        public static ConfigEntry<float> ProgressionBase;
+        public static ConfigEntry<string> ProgressionTiers;
+        public static ConfigEntry<bool> DeferToUtangard;
         public static ConfigEntry<string> ExcludeItems;
         public static ConfigEntry<bool> WriteItemList;
         public static ConfigEntry<bool> Verbose;
@@ -55,13 +59,51 @@ namespace Hoard
             IncludeNonTeleportable = config.Bind("Stacks", "IncludeNonTeleportable", false,
                 "Also affect items that cannot go through a portal - ore, metal bars and "
                 + "the like. Off by default because hauling metal by cart and boat is a "
-                + "deliberate part of the game's pacing, not an oversight.");
+                + "deliberate part of the game's pacing, not an oversight.\n"
+                + "Leaving this off does not mean metal never stacks: an earned metal tier "
+                + "in ProgressionTiers lifts the rule, which is the intended way for ore "
+                + "stacking to arrive. This switch is for wanting it sooner than that.");
 
             IncludeTrophies = config.Bind("Stacks", "IncludeTrophies", true,
                 "Also affect trophies. Harmless - they are decoration and turn-ins.");
 
             ExcludeItems = config.Bind("Stacks", "ExcludeItems", "",
                 "Comma-separated item prefab names to leave completely alone.");
+
+            ScaleWithProgression = config.Bind("Progression", "ScaleWithProgression", true,
+                "Each boss raises one group of stacks instead of everything being multiplied "
+                + "from the first minute. Meadows scarcity is the game teaching you to plan; "
+                + "your ninth trip to the same copper deposit is not teaching you anything, "
+                + "and a flat multiplier cannot tell those two apart. Off falls back to "
+                + "StackMultiplier for everything.");
+
+            ProgressionBase = config.Bind("Progression", "ProgressionBase", 1f,
+                "The multiplier for a group no boss has unlocked yet. 1 is vanilla, which is "
+                + "the point: the early game is supposed to be tight.");
+
+            ProgressionTiers = config.Bind("Progression", "ProgressionTiers",
+                "defeated_eikthyr:building:2, defeated_gdking:farming:2, "
+                + "defeated_bonemass:metal:2, defeated_dragon:ammo:2, "
+                + "defeated_goblinking:food:2, defeated_queen:trophy:2, "
+                + "defeated_fader:other:2",
+                "boss:group:multiplier, comma separated. The highest earned entry naming a "
+                + "group wins, so entries never compound.\n"
+                + "Groups: building (anything the Hammer asks for), farming (anything the "
+                + "Cultivator asks for), metal (anything a portal refuses), food, ammo, "
+                + "trophy, other, and all.\n"
+                + "The groups are read off those tools' piece tables rather than a list here, "
+                + "so an item a content mod adds lands in the right one by itself.\n"
+                + "An earned metal tier also lifts the portal rule - see "
+                + "IncludeNonTeleportable. Any global key works, not only boss keys, so a "
+                + "modded key can be named here.");
+
+            DeferToUtangard = config.Bind("Progression", "DeferToUtangard", true,
+                "When Utangard is installed, ask it whether the group has earned a boss "
+                + "rather than reading the world key. Utangard opens a biome only when every "
+                + "member of the group was at that boss's death, so the two answers differ "
+                + "whenever somebody was offline for a kill - and without this, stacks would "
+                + "arrive for a biome Utangard still has fenced off. No effect when Utangard "
+                + "is not installed.");
 
             WriteItemList = config.Bind("Diagnostics", "WriteItemList", true,
                 "Write ezomic.valheim.hoard.items.txt beside this file: every item in the "

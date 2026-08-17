@@ -27,6 +27,59 @@ home from a copper mine is still a trip.
 
 Everything is a knob. If you decide you want the easy version, it is one edit away.
 
+## Each boss raises one kind of stack
+
+A flat multiplier cannot tell the two halves of that argument apart. Meadows scarcity is the
+game teaching you to plan; your ninth trip to the same copper deposit is not teaching you
+anything. So stacks start at vanilla and each boss raises **one group**:
+
+| Boss | Raises | Which is |
+| --- | --- | --- |
+| Eikthyr | `building` | anything the Hammer asks for — wood, stone, resin |
+| The Elder | `farming` | anything the Cultivator asks for — seeds and crops |
+| Bonemass | `metal` | anything a portal refuses — ore and bars |
+| Moder | `ammo` | arrows, bolts, bait |
+| Yagluth | `food` | everything consumable |
+| The Queen | `trophy` | trophies |
+| Fader | `other` | the rest — amber, eggs, monster drops, craft materials |
+
+**The groups are read off the game's own systems, not a list in this mod.** Building material
+is whatever appears as a build cost on the Hammer's piece table, so an item a content mod adds
+lands in the right group by itself. Metal is whatever the game refuses to send through a
+portal — the same flag the pacing rule already used.
+
+Every row is one line of `ProgressionTiers`, so a different table is one edit. Any global key
+works, not just a boss key.
+
+**An earned metal tier lifts the portal rule.** That is on purpose and it is the point: the
+haul is real pacing while you are doing your first copper runs, and by the boss that hands you
+the iron age you have already paid it. `IncludeNonTeleportable` remains for anyone who
+disagrees and does not want to wait.
+
+### In multiplayer, it is the world's progress
+
+Stack size lives on the item prefab, so "different players, different stacks" would mean two
+clients with different item databases. One drops a hundred wood in the shared chest, the other
+opens it holding a slot bigger than its own maximum, and the next move writes back through the
+smaller rules — silent loss out of a shared chest, the worst bug a storage mod can have.
+
+Global keys are world state the server pushes to every client, so everyone computes the same
+answer with no new networking. A fresh character joining a Mistlands-era world gets
+Mistlands-era stacks, which is the deliberate trade: progress is the world's, not yours.
+
+Keys only ever accumulate, so the multiplier only ever rises. Nothing here can leave a stack
+sitting above its own limit.
+
+### With Utangard
+
+[Utangard](https://github.com/Ezomic/valheim-utangard) opens a biome only when **every member
+of the group** was personally at that boss's death, which is not the same as the boss having
+died in the world. Those answers part company the moment somebody is offline for a kill.
+
+When Utangard is installed, Hoard asks it instead of reading the key, so stacks never arrive
+for a biome Utangard still has fenced off. It is a soft dependency in both directions: neither
+mod needs the other, and `DeferToUtangard = false` turns it off.
+
 ## What it will not do
 
 **It never makes equipment stackable.** Only items with a vanilla stack size above 1 are
@@ -66,7 +119,11 @@ Solo, none of that applies and Core is not needed at all.
 
 | Key | Default | What it does |
 | --- | --- | --- |
-| `StackMultiplier` | `2` | Multiplies vanilla stack size of anything that already stacks |
+| `ScaleWithProgression` | `true` | Each boss raises one group. Off falls back to `StackMultiplier` |
+| `ProgressionBase` | `1` | Multiplier for a group no boss has unlocked — 1 is vanilla |
+| `ProgressionTiers` | see above | `boss:group:multiplier`, comma separated |
+| `DeferToUtangard` | `true` | Ask Utangard what the group has earned, when it is installed |
+| `StackMultiplier` | `2` | Flat multiplier, used only when `ScaleWithProgression` is off |
 | `StackCap` | `200` | Hard ceiling on the result |
 | `WeightMultiplier` | `1` | Multiplies item weight; `1` leaves it alone |
 | `IncludeNonTeleportable` | `false` | Also affect ore, bars and anything portal-blocked |
@@ -113,8 +170,9 @@ into the shared play profile with `valheim-own-profile\build-all.ps1`.
 
 ## What to check
 
-1. Wood should cap at 100 rather than 50.
-2. **Copper ore should still cap at 30** — unchanged, because it cannot be teleported.
+1. On a world with Eikthyr down, wood should cap at 100 — and on a fresh world it should
+   still be 50, with the item list saying `awaiting defeated_eikthyr`.
+2. **Copper ore should still cap at 30** until Bonemass, because it cannot be teleported.
 3. Weight per item should be exactly vanilla.
 4. A sword or axe should still not stack.
 5. Open `ezomic.valheim.hoard.items.txt` if a specific item looks wrong — it names every

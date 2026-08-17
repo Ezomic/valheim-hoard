@@ -18,7 +18,8 @@ namespace Hoard
     /// Everything is computed from the item's original values, which are captured the
     /// first time it is seen and never overwritten. ObjectDB is set up more than once -
     /// Awake, then CopyOtherDB when a world loads - so a mod that multiplies whatever it
-    /// currently finds ends up squaring its own multiplier on the second pass.
+    /// currently finds ends up squaring its own multiplier on the second pass. It also means
+    /// the progression ramp can raise and re-raise the same item without compounding.
     /// </summary>
     internal static class StackTuner
     {
@@ -46,10 +47,37 @@ namespace Hoard
         private static readonly Dictionary<string, Original> Originals =
             new Dictionary<string, Original>();
 
+        /// <summary>
+        /// A fresh ObjectDB. The item groups are read out of the database's own piece tables,
+        /// so they describe the previous one until they are dropped - the same static-cache
+        /// trap that catches prefab registration across a world change.
+        /// </summary>
+        public static void Rebuild()
+        {
+            ItemGroups.Invalidate();
+            Progression.Invalidate();
+            Apply();
+        }
+
+        /// <summary>
+        /// A global key arrived. Almost all of them are not ours, and on connect the whole
+        /// world's keys come through one at a time, so this asks whether any group's
+        /// multiplier actually moved before walking a thousand items.
+        /// </summary>
+        public static void ApplyIfProgressionChanged()
+        {
+            if (!Progression.Refresh()) return;
+
+            HoardPlugin.Log.LogInfo("World progression changed: " + Progression.Describe());
+            Apply();
+        }
+
         public static void Apply()
         {
             var db = ObjectDB.instance;
             if (db == null || db.m_items == null || db.m_items.Count == 0) return;
+
+            Progression.Refresh();
 
             var changed = 0;
             var alreadyRight = 0;
@@ -73,13 +101,20 @@ namespace Hoard
                     Originals[prefab.name] = original;
                 }
 
+                var group = ItemGroups.Classify(prefab.name, shared);
+
                 // Never from the current value - see the note on CopyOtherDB above.
                 var reason = SkipReason(prefab.name, shared, original);
+                string pending = null;
 
                 if (reason == null)
                 {
+                    var multiplier = HoardConfig.ScaleWithProgression.Value
+                        ? Progression.MultiplierFor(group)
+                        : HoardConfig.StackMultiplier.Value;
+
                     var stack = Mathf.Clamp(
-                        Mathf.RoundToInt(original.Stack * HoardConfig.StackMultiplier.Value),
+                        Mathf.RoundToInt(original.Stack * multiplier),
                         1,
                         Mathf.Max(1, HoardConfig.StackCap.Value));
 
@@ -101,6 +136,11 @@ namespace Hoard
                                 + ", weight " + original.Weight.ToString("0.##", CultureInfo.InvariantCulture)
                                 + " -> " + weight.ToString("0.##", CultureInfo.InvariantCulture));
                     }
+
+                    // Only worth saying when the item is still at its vanilla size: an item
+                    // already raised does not need to be told what would raise it further.
+                    if (HoardConfig.ScaleWithProgression.Value && stack == original.Stack)
+                        pending = Progression.PendingFor(group);
                 }
                 else
                 {
@@ -114,9 +154,10 @@ namespace Hoard
                     prefab.name,
                     DisplayName(shared.m_name, prefab.name),
                     shared.m_itemType.ToString(),
+                    group,
                     original.Stack, shared.m_maxStackSize,
                     original.Weight, shared.m_weight,
-                    reason));
+                    reason ?? (pending != null ? ItemDump.Awaiting + pending : null)));
             }
 
             // All three counts, because they add up to the item count and the old pair did
@@ -143,9 +184,12 @@ namespace Hoard
             // Equipment. Stacking it would silently discard per-item durability.
             if (original.Stack <= 1) return Equipment;
 
-            // Ore, bars, and anything else the game refuses to send through a portal.
-            // Hauling those is a pacing decision, so it stays opt-in.
-            if (!shared.m_teleportable && !HoardConfig.IncludeNonTeleportable.Value)
+            // Ore, bars, and anything else the game refuses to send through a portal. Hauling
+            // those is a pacing decision, so it stays shut until either the switch is thrown
+            // or a metal tier is earned - the ramp is the intended way for it to open.
+            if (!shared.m_teleportable
+                && !HoardConfig.IncludeNonTeleportable.Value
+                && !Progression.MetalUnlocked())
                 return PortalBlocked;
 
             if (shared.m_itemType == ItemDrop.ItemData.ItemType.Trophy

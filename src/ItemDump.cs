@@ -23,11 +23,18 @@ namespace Hoard
     /// </summary>
     internal static class ItemDump
     {
+        /// <summary>
+        /// Prefix for "this group's turn has not come yet". Shared with StackTuner so the
+        /// header can tell those apart from the rules that refuse an item outright.
+        /// </summary>
+        internal const string Awaiting = "awaiting ";
+
         internal readonly struct Row
         {
             public readonly string Prefab;
             public readonly string Name;
             public readonly string Type;
+            public readonly string Group;
             public readonly int OriginalStack;
             public readonly int Stack;
             public readonly float OriginalWeight;
@@ -36,13 +43,14 @@ namespace Hoard
             /// <summary>Empty when Hoard owns the values, otherwise the rule that stopped it.</summary>
             public readonly string Note;
 
-            public Row(string prefab, string name, string type,
+            public Row(string prefab, string name, string type, string group,
                        int originalStack, int stack,
                        float originalWeight, float weight, string note)
             {
                 Prefab = prefab;
                 Name = name;
                 Type = type;
+                Group = group;
                 OriginalStack = originalStack;
                 Stack = stack;
                 OriginalWeight = originalWeight;
@@ -100,24 +108,34 @@ namespace Hoard
 
         private static string Build(List<Row> rows)
         {
-            // Type first so related items sit together, since that is how someone scanning
-            // for "the food" or "the ores" actually reads it.
+            // Group first, because the group is what a boss raises: someone asking "what did
+            // Eikthyr just do for me" wants those items adjacent, and someone asking about one
+            // item finds it by searching rather than by scrolling.
             rows.Sort((a, b) =>
             {
-                var byType = string.Compare(a.Type, b.Type, StringComparison.OrdinalIgnoreCase);
-                return byType != 0
-                    ? byType
-                    : string.Compare(a.Prefab, b.Prefab, StringComparison.OrdinalIgnoreCase);
+                var byGroup = Array.IndexOf(ItemGroups.All, a.Group)
+                              .CompareTo(Array.IndexOf(ItemGroups.All, b.Group));
+                if (byGroup != 0) return byGroup;
+
+                return string.Compare(a.Prefab, b.Prefab, StringComparison.OrdinalIgnoreCase);
             });
 
             var cells = new List<string[]>(rows.Count);
             var changed = 0;
             var alreadyRight = 0;
+            var waiting = 0;
             var counts = new Dictionary<string, int>();
 
             foreach (var row in rows)
             {
-                if (row.Note.Length > 0)
+                // "awaiting <boss>" is not a rule refusing the item, it is the item's turn not
+                // having come round yet. Counting it with the refusals would put most of the
+                // database under "left alone" on a fresh world and make the mod look broken.
+                if (row.Note.StartsWith(Awaiting, StringComparison.Ordinal))
+                {
+                    waiting++;
+                }
+                else if (row.Note.Length > 0)
                 {
                     int n;
                     counts.TryGetValue(row.Note, out n);
@@ -137,13 +155,14 @@ namespace Hoard
                     row.Prefab,
                     row.Name,
                     row.Type,
+                    row.Group,
                     Range(row.OriginalStack.ToString(), row.Stack.ToString()),
                     Range(Weight(row.OriginalWeight), Weight(row.Weight)),
                     row.Note
                 });
             }
 
-            var headers = new[] { "Prefab", "Name", "Type", "Stack", "Weight", "Left alone because" };
+            var headers = new[] { "Prefab", "Name", "Type", "Group", "Stack", "Weight", "Status" };
             var widths = new int[headers.Length];
             for (var i = 0; i < headers.Length; i++) widths[i] = headers[i].Length;
             foreach (var row in cells)
@@ -158,9 +177,11 @@ namespace Hoard
             sb.AppendLine("  " + Path.GetFileName(HoardConfig.ConfigPath) + " beside this file.");
             sb.AppendLine();
             sb.AppendLine("  The first column is the prefab name, which is what ExcludeItems takes.");
-            sb.AppendLine("  An arrow means Hoard changed that value. A single number means it did not:");
-            sb.AppendLine("  either the last column names the rule that left the item alone, or the");
-            sb.AppendLine("  current settings simply work out to the vanilla number.");
+            sb.AppendLine("  An arrow means Hoard changed that value. A single number means it did not,");
+            sb.AppendLine("  and the last column says why: a rule that refused it, or the boss whose");
+            sb.AppendLine("  death will raise that group.");
+            sb.AppendLine();
+            sb.AppendLine("  Earned so far: " + Progression.Describe());
             sb.AppendLine();
             sb.AppendLine("  Settings: StackMultiplier " + Number(HoardConfig.StackMultiplier.Value)
                           + ", StackCap " + HoardConfig.StackCap.Value
@@ -168,9 +189,14 @@ namespace Hoard
             sb.AppendLine("            IncludeNonTeleportable " + Flag(HoardConfig.IncludeNonTeleportable.Value)
                           + ", IncludeTrophies " + Flag(HoardConfig.IncludeTrophies.Value));
             sb.AppendLine();
-            sb.AppendLine("  " + rows.Count + " items: " + changed + " changed, "
-                          + alreadyRight + " already at those values, "
-                          + Total(counts) + " left alone");
+            // State, not a pass. These count what the items are now, which is why they do not
+            // match the "Retuned n" line in the log: that one counts what this particular
+            // pass moved, and on the second setup of a session it moves nothing because the
+            // first one already did.
+            sb.AppendLine("  " + rows.Count + " items: " + changed + " raised above vanilla, "
+                          + waiting + " waiting on a boss, "
+                          + Total(counts) + " left alone by a rule, "
+                          + alreadyRight + " unchanged");
             sb.AppendLine("  " + Breakdown(counts));
             sb.AppendLine();
 

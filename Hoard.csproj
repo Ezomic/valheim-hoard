@@ -5,7 +5,7 @@
     <AssemblyName>Hoard</AssemblyName>
     <RootNamespace>Hoard</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.9.2</Version>
+    <Version>0.10.0</Version>
     <Authors>Robbin Thijssen</Authors>
     <Company>Thijssen Software</Company>
     <Product>Hoard</Product>
@@ -43,6 +43,14 @@
          to plugins\Core, and a second copy landing beside this one would be two assemblies
          sharing one BepInPlugin GUID, which is a plugin that silently does not load. -->
     <ProjectReference Include="..\core\Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+
+    <!-- Utangard decides whether the group has earned a boss, when it is installed. Same
+         Private=false reasoning as Core: it deploys its own DLL and a second copy beside
+         this one would be two assemblies sharing a BepInPlugin GUID. The dependency is soft
+         at runtime - see Progression.EarnedThroughUtangard - so this is compile-time only. -->
+    <ProjectReference Include="..\utangard\Utangard.csproj">
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>

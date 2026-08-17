@@ -7,6 +7,55 @@ Nothing here has been released yet. The numbers below are development builds, an
 reserved for the first version that has actually been played and published** — a 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
 
+## [0.10.0] — 2026-08-17
+
+### Each boss raises one kind of stack
+
+Stacks now start at vanilla and each boss unlocks one group: Eikthyr the building material,
+The Elder the crops, Bonemass the metal, Moder the ammo, Yagluth the food, The Queen the
+trophies, Fader everything else. `ScaleWithProgression = false` restores the old flat
+multiplier.
+
+A flat multiplier cannot tell the two halves of this mod's own argument apart. Meadows
+scarcity is the game teaching you to plan; the ninth trip to the same copper deposit is not
+teaching you anything.
+
+- **The groups are read off the game's own systems.** Building material is whatever appears
+  as a build cost on the Hammer's piece table, crops are the Cultivator's, metal is whatever
+  a portal refuses. So an item a content mod adds lands in the right group by itself, and
+  there is no list here to go stale.
+- **An earned metal tier lifts the portal rule.** The haul is real pacing during the first
+  copper runs and paid off by the boss that hands you the iron age.
+  `IncludeNonTeleportable` stays for anyone who wants it sooner.
+- **The item list names the boss each group is waiting for**, so "why is my wood still 50"
+  is answered in the file rather than by reading the tier table.
+
+### It hangs on the world's progress, not each player's
+
+Stack size lives on the item prefab, so per-player stacks would mean two clients holding
+different item databases — one drops a hundred wood in a shared chest, the other opens it
+holding a slot over its own maximum, and the next move writes back through the smaller
+rules. Global keys are world state pushed to every client, so everyone computes the same
+answer with no new networking, and since keys only accumulate the multiplier only ever
+rises.
+
+Read through the **string** global-key lookup, not the `GlobalKeys` enum: that enum stops at
+`defeated_goblinking` in this build, with no `defeated_queen` or `defeated_fader` member, so
+the enum route would have silently capped the ramp at the Plains.
+
+### Utangard decides what counts, when it is installed
+
+Utangard opens a biome only when every member of the group was personally at that boss's
+death, which is not the same as the boss having died in the world. Hoard now asks it rather
+than reading the raw key, so stacks never arrive for a biome Utangard still has fenced off.
+Soft dependency; `DeferToUtangard = false` turns it off, and neither mod needs the other.
+
+### Changed
+
+- The item list gained a Group column, sorts by group, and its header counts describe the
+  **state** of the database rather than the last pass — so they no longer appear to
+  contradict the `Retuned n` line in the log, which counts only what that pass moved.
+
 ## [0.9.2] — 2026-08-17
 
 ### Added

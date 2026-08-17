@@ -12,6 +12,11 @@ namespace Hoard
     // that is absent does not degrade, the plugin simply never loads. Soft still buys
     // the load-order guarantee when Core is present, which is what registering needs.
     [BepInDependency(CoreGuid, BepInDependency.DependencyFlags.SoftDependency)]
+    // Also soft. Utangard decides what "earned" means when it is installed - see
+    // Progression.EarnedThroughUtangard - but Hoard is a stack mod, not a companion piece,
+    // and must load on its own. Soft still buys the load-order guarantee that the check
+    // needs: Chainloader.PluginInfos is only complete for plugins that loaded first.
+    [BepInDependency(UtangardGuid, BepInDependency.DependencyFlags.SoftDependency)]
     // No BepInProcess. It is a whitelist, and a dedicated server runs valheim_server.exe.
     // This mod already patches CopyOtherDB precisely because a client rebuilds its item
     // database from the server's copy - so a server without it hands back vanilla stack
@@ -22,11 +27,14 @@ namespace Hoard
         public const string PluginName = "Hoard";
         // Pre-1.0 on purpose: 1.0.0 is reserved for the first version that has been played
         // and published. See CHANGELOG.md.
-        public const string PluginVersion = "0.9.2";
+        public const string PluginVersion = "0.10.0";
         public const string PluginAuthor = "Robbin Thijssen";
 
         /// <summary>Core's plugin GUID. Optional - see TryRegisterWithCore.</summary>
         private const string CoreGuid = "ezomic.valheim.core";
+
+        /// <summary>Utangard's plugin GUID. Optional - see Progression.</summary>
+        private const string UtangardGuid = "ezomic.valheim.utangard";
 
         internal static ManualLogSource Log;
 
@@ -104,14 +112,31 @@ namespace Hoard
         [HarmonyPatch(typeof(ObjectDB), "Awake")]
         private static void TuneOnAwake()
         {
-            StackTuner.Apply();
+            StackTuner.Rebuild();
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
         private static void TuneOnCopy()
         {
-            StackTuner.Apply();
+            StackTuner.Rebuild();
+        }
+
+        /// <summary>
+        /// Every way a global key can arrive funnels through here: the bulk list the server
+        /// sends on connect via RPC_GlobalKeys, and a boss dying while you are stood there.
+        /// Patching SetGlobalKey instead would miss the first, and a client that joined a
+        /// world where the bosses are already down is the common case, not the edge.
+        ///
+        /// It fires for every key in the game, most of which are world modifiers rather than
+        /// progress, so the work of deciding whether anything moved lives behind
+        /// ApplyIfProgressionChanged rather than here.
+        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ZoneSystem), "GlobalKeyAdd", new[] { typeof(string), typeof(bool) })]
+        private static void TuneOnGlobalKey()
+        {
+            StackTuner.ApplyIfProgressionChanged();
         }
     }
 }
