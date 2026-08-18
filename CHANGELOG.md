@@ -3,9 +3,45 @@
 Notable changes to Yoke. Format follows [Keep a Changelog](https://keepachangelog.com),
 and the mod uses [semantic versioning](https://semver.org).
 
-Nothing here has been released yet. The numbers below are development builds, and **1.0.0 is
-reserved for the first version that has actually been played and published**. A 1.0 asserts
-a mod works in a game, not merely that it compiles and loads.
+1.0.0 is the first published version. The numbers below it were development builds; the rule
+was that 1.0 is spent on the build that actually ships, and it was.
+
+## [1.0.0] - 2026-08-18
+
+First release.
+
+Yoke raises the stacks of a biome's own goods when you kill that biome's boss. Meadows
+timber doubles when Eikthyr falls, Black Forest ore when The Elder does, and so on to Fader
+and the Ashlands. Nothing else changes: weight is untouched, equipment never stacks, and
+until the Swamp is earned a portal still refuses ore.
+
+What makes it different from the rest of its category is that **nothing is listed**. Which
+biome an item belongs to is worked out from the game's own tables, so an item a content mod
+adds lands in the right place by itself:
+
+- the world's vegetation table, where a copper deposit is Black Forest and the deposit says
+  it drops copper ore;
+- the spawn tables and spawners, down to the nest that makes the creature rather than the
+  creature itself;
+- recipes, smelters, cooking stations and fermenters, where a made thing takes the biome of
+  its latest ingredient, so bread is Plains because barley is;
+- each boss's own drops, matched through the global key its death sets;
+- and a short override list for the roots that only exist inside locations.
+
+That places 665 of 671 stackable items. The six it does not are crafting oddities, left
+alone rather than guessed at.
+
+The generated item list beside the config names every item, what was done to it, and which
+rule or which boss it is waiting on.
+
+### Verified in play
+
+Wood at 100 and blueberries at 50 on a world with Eikthyr down, with copper ore still
+portal-blocked. The biome index, the tier ramp, the portal rule and the retune when a world's
+keys arrive were all confirmed on a real client.
+
+**Not yet seen:** a boss dying mid-session and the stacks moving without a restart. The path
+is exercised on every world load; what is unproven is that one arrival.
 
 ## [0.13.0] - 2026-08-18
 

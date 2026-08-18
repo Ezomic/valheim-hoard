@@ -7,7 +7,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "Ezomic"
 name = "Yoke"
-versionNumber = "0.13.0"
+versionNumber = "1.0.0"
 description = "Bigger stacks, earned biome by biome."
 websiteUrl = "https://github.com/Ezomic/valheim-yoke"
 containsNsfwContent = false

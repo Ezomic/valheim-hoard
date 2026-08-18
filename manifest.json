@@ -1,7 +1,7 @@
 {
   "name": "Yoke",
   "author": "Robbin Thijssen",
-  "version_number": "0.13.0",
+  "version_number": "1.0.0",
   "website_url": "https://github.com/Ezomic/valheim-yoke",
   "description": "Bigger stacks, earned biome by biome.",
   "dependencies": [
