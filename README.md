@@ -188,6 +188,16 @@ dotnet build
 Deploys to the repo-local `testprofile\`. Override with `-p:ProfileDir=...`, or build it
 into the shared play profile with `valheim-own-profile\build-all.ps1`.
 
+## Reporting bugs
+
+[The Discord](https://discord.gg/hJzAVaZ5wb) is the fastest route, and the right one if
+you are not sure whether what you are seeing is a bug at all. Issues on
+[the repo](https://github.com/Ezomic/valheim-yoke) work too and suit anything long.
+
+Bring `BepInEx\LogOutput.log` if you can, and say whether you were on a server or your
+own world. The log is most of the difference between a fix and a guess, and it is written
+every session whether or not anything went wrong.
+
 ## Author
 
 Yoke is an original mod by **Robbin Thijssen** (Thijssen Software).
