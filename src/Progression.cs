@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using BepInEx.Bootstrap;
 
-namespace Hoard
+namespace Yoke
 {
     /// <summary>
     /// Which stacks the world has earned.
@@ -83,7 +83,7 @@ namespace Hoard
         /// </summary>
         public static float MultiplierFor(string group)
         {
-            var best = HoardConfig.ProgressionBase.Value;
+            var best = YokeConfig.ProgressionBase.Value;
             var unlockedAt = -1;
 
             foreach (var tier in Tiers())
@@ -100,7 +100,7 @@ namespace Hoard
             // is not "unlocked at zero percent", it is untouched.
             if (unlockedAt < 0) return best;
 
-            var step = HoardConfig.ProgressionStep.Value;
+            var step = YokeConfig.ProgressionStep.Value;
             if (step <= 0f) return best;
 
             var order = Order();
@@ -128,7 +128,7 @@ namespace Hoard
 
         private static string[] Order()
         {
-            var raw = HoardConfig.ProgressionOrder.Value ?? "";
+            var raw = YokeConfig.ProgressionOrder.Value ?? "";
             if (_order != null && raw == _orderFrom) return _order;
 
             var parts = raw.Split(',');
@@ -153,7 +153,7 @@ namespace Hoard
         /// </summary>
         public static string PendingFor(string group)
         {
-            var best = HoardConfig.ProgressionBase.Value;
+            var best = YokeConfig.ProgressionBase.Value;
             string pending = null;
 
             foreach (var tier in Tiers())
@@ -183,7 +183,7 @@ namespace Hoard
         /// </summary>
         public static bool PortalRuleLifted()
         {
-            if (!HoardConfig.ScaleWithProgression.Value) return false;
+            if (!YokeConfig.ScaleWithProgression.Value) return false;
 
             var owner = PortalRuleOwner();
             if (string.IsNullOrEmpty(owner)) return false;
@@ -200,7 +200,7 @@ namespace Hoard
         /// <summary>The biome whose tier lifts the portal rule - the Swamp, by default.</summary>
         public static string PortalRuleOwner()
         {
-            var owner = HoardConfig.LiftPortalRuleAt.Value;
+            var owner = YokeConfig.LiftPortalRuleAt.Value;
             return owner == null ? "" : owner.Trim().ToLowerInvariant();
         }
 
@@ -258,11 +258,11 @@ namespace Hoard
             if (!_utangardChecked)
             {
                 _utangardChecked = true;
-                _utangardPresent = HoardConfig.DeferToUtangard.Value
+                _utangardPresent = YokeConfig.DeferToUtangard.Value
                                    && Chainloader.PluginInfos.ContainsKey(UtangardGuid);
 
                 if (_utangardPresent)
-                    HoardPlugin.Log.LogInfo(
+                    YokePlugin.Log.LogInfo(
                         "Utangard is installed; stacks follow what the group has earned, not what the world has seen.");
             }
 
@@ -274,7 +274,7 @@ namespace Hoard
         /// <summary>
         /// Utangard gates a biome on every member of the group having personally been at that
         /// boss's death, not on the boss having died in the world. Those two answers diverge
-        /// the moment one player is offline for a kill, and a Hoard that read the raw key
+        /// the moment one player is offline for a kill, and a Yoke that read the raw key
         /// would hand out plains-era stacks for a biome Utangard still has fenced off - the
         /// two mods disagreeing out loud about the same word.
         ///
@@ -294,7 +294,7 @@ namespace Hoard
 
         private static List<Tier> Tiers()
         {
-            var raw = HoardConfig.ProgressionTiers.Value ?? "";
+            var raw = YokeConfig.ProgressionTiers.Value ?? "";
             if (_tiers != null && raw == _parsedFrom) return _tiers;
 
             _parsedFrom = raw;
@@ -321,7 +321,7 @@ namespace Hoard
                 var parts = text.Split(':');
                 if (parts.Length != 3)
                 {
-                    HoardPlugin.Log.LogWarning(
+                    YokePlugin.Log.LogWarning(
                         "Ignoring tier '" + text + "': expected boss:group:multiplier.");
                     continue;
                 }
@@ -330,7 +330,7 @@ namespace Hoard
                 if (!float.TryParse(parts[2].Trim(), NumberStyles.Float,
                                     CultureInfo.InvariantCulture, out multiplier))
                 {
-                    HoardPlugin.Log.LogWarning(
+                    YokePlugin.Log.LogWarning(
                         "Ignoring tier '" + text + "': '" + parts[2].Trim() + "' is not a number.");
                     continue;
                 }
@@ -338,7 +338,7 @@ namespace Hoard
                 var group = parts[1].Trim().ToLowerInvariant();
                 if (Array.IndexOf(BiomeIndex.All, group) < 0 && group != BiomeIndex.Everything)
                 {
-                    HoardPlugin.Log.LogWarning(
+                    YokePlugin.Log.LogWarning(
                         "Ignoring tier '" + text + "': '" + group + "' is not one of "
                         + string.Join(", ", BiomeIndex.All) + ", " + BiomeIndex.Everything + ".");
                     continue;
@@ -359,8 +359,8 @@ namespace Hoard
         /// <summary>What every group is worth right now, as one comparable string.</summary>
         private static string Signature()
         {
-            if (!HoardConfig.ScaleWithProgression.Value)
-                return "flat:" + HoardConfig.StackMultiplier.Value.ToString(CultureInfo.InvariantCulture);
+            if (!YokeConfig.ScaleWithProgression.Value)
+                return "flat:" + YokeConfig.StackMultiplier.Value.ToString(CultureInfo.InvariantCulture);
 
             var sb = new System.Text.StringBuilder();
             foreach (var group in BiomeIndex.All)
@@ -376,7 +376,7 @@ namespace Hoard
         /// <summary>The earned tiers, for the item list header.</summary>
         public static string Describe()
         {
-            if (!HoardConfig.ScaleWithProgression.Value) return "off - one flat multiplier";
+            if (!YokeConfig.ScaleWithProgression.Value) return "off - one flat multiplier";
 
             // Only groups some tier can actually raise. Listing the rest at 1x reads as a
             // promise that a boss will come for them, and with the default table none will.

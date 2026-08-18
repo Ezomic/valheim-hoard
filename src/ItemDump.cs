@@ -4,11 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Hoard
+namespace Yoke
 {
     /// <summary>
-    /// Writes a plain-text table of every item in ObjectDB: what it is in vanilla, what Hoard
-    /// made it, and - when Hoard left it alone - which rule stopped it.
+    /// Writes a plain-text table of every item in ObjectDB: what it is in vanilla, what Yoke
+    /// made it, and - when Yoke left it alone - which rule stopped it.
     ///
     /// Why this exists: ExcludeItems is written in prefab names, and nobody knows that tin
     /// ore is "TinOre" or that a carrot seed is "CarrotSeeds". A per-item setting you cannot
@@ -40,7 +40,7 @@ namespace Hoard
             public readonly float OriginalWeight;
             public readonly float Weight;
 
-            /// <summary>Empty when Hoard owns the values, otherwise the rule that stopped it.</summary>
+            /// <summary>Empty when Yoke owns the values, otherwise the rule that stopped it.</summary>
             public readonly string Note;
 
             public Row(string prefab, string name, string type, string group,
@@ -82,9 +82,9 @@ namespace Hoard
 
         public static void Write(List<Row> rows)
         {
-            if (!HoardConfig.WriteItemList.Value || rows == null || rows.Count == 0) return;
+            if (!YokeConfig.WriteItemList.Value || rows == null || rows.Count == 0) return;
 
-            var path = HoardConfig.ItemListPath;
+            var path = YokeConfig.ItemListPath;
             if (string.IsNullOrEmpty(path)) return;
 
             var text = Build(rows);
@@ -96,13 +96,13 @@ namespace Hoard
                 // and a BOM shows up as stray characters in a few of them.
                 File.WriteAllText(path, text, new UTF8Encoding(false));
                 _lastWritten = text;
-                HoardPlugin.Log.LogInfo("Wrote the item list to " + Path.GetFileName(path) + ".");
+                YokePlugin.Log.LogInfo("Wrote the item list to " + Path.GetFileName(path) + ".");
             }
             catch (Exception e)
             {
                 // A diagnostic file that cannot be written is not worth failing a load over -
                 // the folder may be read-only, or something may have the file open.
-                HoardPlugin.Log.LogWarning("Could not write the item list: " + e.Message);
+                YokePlugin.Log.LogWarning("Could not write the item list: " + e.Message);
             }
         }
 
@@ -176,13 +176,13 @@ namespace Hoard
 
             var sb = new StringBuilder(rows.Count * 96);
 
-            sb.AppendLine("Hoard " + HoardPlugin.PluginVersion + " - every item in this session");
+            sb.AppendLine("Yoke " + YokePlugin.PluginVersion + " - every item in this session");
             sb.AppendLine();
             sb.AppendLine("  Generated on every run, so edits here are overwritten. The settings are in");
-            sb.AppendLine("  " + Path.GetFileName(HoardConfig.ConfigPath) + " beside this file.");
+            sb.AppendLine("  " + Path.GetFileName(YokeConfig.ConfigPath) + " beside this file.");
             sb.AppendLine();
             sb.AppendLine("  The first column is the prefab name, which is what ExcludeItems takes.");
-            sb.AppendLine("  An arrow means Hoard changed that value. A single number means it did not,");
+            sb.AppendLine("  An arrow means Yoke changed that value. A single number means it did not,");
             sb.AppendLine("  and the last column says why: a rule that refused it, or the boss whose");
             sb.AppendLine("  death will raise that group.");
             sb.AppendLine();
@@ -204,11 +204,11 @@ namespace Hoard
                               + " BiomeOverrides is how you place one.");
 
             sb.AppendLine();
-            sb.AppendLine("  Settings: StackMultiplier " + Number(HoardConfig.StackMultiplier.Value)
-                          + ", StackCap " + HoardConfig.StackCap.Value
-                          + ", WeightMultiplier " + Number(HoardConfig.WeightMultiplier.Value));
-            sb.AppendLine("            IncludeNonTeleportable " + Flag(HoardConfig.IncludeNonTeleportable.Value)
-                          + ", IncludeTrophies " + Flag(HoardConfig.IncludeTrophies.Value));
+            sb.AppendLine("  Settings: StackMultiplier " + Number(YokeConfig.StackMultiplier.Value)
+                          + ", StackCap " + YokeConfig.StackCap.Value
+                          + ", WeightMultiplier " + Number(YokeConfig.WeightMultiplier.Value));
+            sb.AppendLine("            IncludeNonTeleportable " + Flag(YokeConfig.IncludeNonTeleportable.Value)
+                          + ", IncludeTrophies " + Flag(YokeConfig.IncludeTrophies.Value));
             sb.AppendLine();
             // State, not a pass. These count what the items are now, which is why they do not
             // match the "Retuned n" line in the log: that one counts what this particular

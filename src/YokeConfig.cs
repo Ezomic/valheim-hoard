@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using BepInEx.Configuration;
 
-namespace Hoard
+namespace Yoke
 {
     /// <summary>
     /// Defaults are deliberately conservative.
@@ -17,7 +17,7 @@ namespace Hoard
     ///
     /// Everything is a knob, so if you decide you want the easy version it is one edit away.
     /// </summary>
-    internal static class HoardConfig
+    internal static class YokeConfig
     {
         public static ConfigEntry<float> StackMultiplier;
         public static ConfigEntry<int> StackCap;
@@ -199,8 +199,8 @@ namespace Hoard
                 + "is not installed.");
 
             WriteItemList = config.Bind("Diagnostics", "WriteItemList", true,
-                "Write ezomic.valheim.hoard.items.txt beside this file: every item in the "
-                + "game, what Hoard did to it, and which rule left it alone when it did "
+                "Write ezomic.valheim.yoke.items.txt beside this file: every item in the "
+                + "game, what Yoke did to it, and which rule left it alone when it did "
                 + "nothing. On by default because the prefab names ExcludeItems takes are "
                 + "not guessable, and because it answers 'why did this item not change' "
                 + "without anyone having to read a log.");

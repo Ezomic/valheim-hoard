@@ -6,10 +6,10 @@ schemaVersion = "0.0.1"
 
 [package]
 namespace = "Ezomic"
-name = "Hoard"
-versionNumber = "0.12.1"
-description = "Bigger stacks, without unbalancing the game."
-websiteUrl = "https://github.com/Ezomic/valheim-hoard"
+name = "Yoke"
+versionNumber = "0.13.0"
+description = "Bigger stacks, earned biome by biome."
+websiteUrl = "https://github.com/Ezomic/valheim-yoke"
 containsNsfwContent = false
 
 [package.dependencies]
@@ -21,8 +21,8 @@ readme = "./README.md"
 outdir = "./build"
 
 [[build.copy]]
-source = "./package/BepInEx/plugins/Hoard"
-target = "plugins/Hoard"
+source = "./package/BepInEx/plugins/Yoke"
+target = "plugins/Yoke"
 
 [publish]
 repository = "https://thunderstore.io"

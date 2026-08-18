@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Hoard
+namespace Yoke
 {
     /// <summary>
     /// Which biome each item comes from, worked out from the tables the game already keeps.
@@ -167,7 +167,7 @@ namespace Hoard
 
             if (_complete)
             {
-                HoardPlugin.Log.LogInfo("Biome index built: " + found.Count + " item(s) placed.");
+                YokePlugin.Log.LogInfo("Biome index built: " + found.Count + " item(s) placed.");
                 return;
             }
 
@@ -179,7 +179,7 @@ namespace Hoard
             if (spawn == null) missing.Add("SpawnSystem");
             if (scene == null) missing.Add("ZNetScene");
 
-            HoardPlugin.Log.LogInfo(
+            YokePlugin.Log.LogInfo(
                 "Biome index partial: " + found.Count + " item(s) placed, still waiting on "
                 + string.Join(" and ", missing.ToArray()) + ".");
         }
@@ -395,7 +395,7 @@ namespace Hoard
         /// <summary>"IronScrap:swamp, Coins:blackforest" - the ones no table can reach.</summary>
         private static void ApplyOverrides(Dictionary<string, int> found)
         {
-            var raw = HoardConfig.BiomeOverrides.Value ?? "";
+            var raw = YokeConfig.BiomeOverrides.Value ?? "";
 
             foreach (var entry in raw.Split(','))
             {
@@ -405,7 +405,7 @@ namespace Hoard
                 var parts = text.Split(':');
                 if (parts.Length != 2)
                 {
-                    HoardPlugin.Log.LogWarning(
+                    YokePlugin.Log.LogWarning(
                         "Ignoring biome override '" + text + "': expected prefab:biome.");
                     continue;
                 }
@@ -417,7 +417,7 @@ namespace Hoard
 
                 if (index < 0)
                 {
-                    HoardPlugin.Log.LogWarning(
+                    YokePlugin.Log.LogWarning(
                         "Ignoring biome override '" + text + "': '" + biome + "' is not a biome.");
                     continue;
                 }

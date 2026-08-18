@@ -1,4 +1,4 @@
-# Hoard design notes
+# Yoke design notes
 
 Why it works the way it does, and how it is built. None of this is needed to play; for that
 see the [README](README.md).
@@ -57,6 +57,6 @@ sees it, its value is what gets recorded as "original".
 2. **Copper ore should still cap at 30** until Bonemass, because it cannot be teleported.
 3. Weight per item should be exactly vanilla.
 4. A sword or axe should still not stack.
-5. Open `ezomic.valheim.hoard.items.txt` if a specific item looks wrong. It names every
+5. Open `ezomic.valheim.yoke.items.txt` if a specific item looks wrong. It names every
    item and the rule that left it alone. `Verbose = true` is for watching a single pass
    happen in the log; the file is the better answer to a question about one item.

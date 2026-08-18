@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 
-namespace Hoard
+namespace Yoke
 {
     /// <summary>
     /// Rewrites stack sizes and weights on the item prefabs in ObjectDB.
@@ -68,7 +68,7 @@ namespace Hoard
         {
             if (!Progression.Refresh()) return;
 
-            HoardPlugin.Log.LogInfo("World progression changed: " + Progression.Describe());
+            YokePlugin.Log.LogInfo("World progression changed: " + Progression.Describe());
             Apply();
         }
 
@@ -110,16 +110,16 @@ namespace Hoard
 
                 if (reason == null)
                 {
-                    var multiplier = HoardConfig.ScaleWithProgression.Value
+                    var multiplier = YokeConfig.ScaleWithProgression.Value
                         ? Progression.MultiplierFor(group)
-                        : HoardConfig.StackMultiplier.Value;
+                        : YokeConfig.StackMultiplier.Value;
 
                     var stack = Mathf.Clamp(
                         Mathf.RoundToInt(original.Stack * multiplier),
                         1,
-                        Mathf.Max(1, HoardConfig.StackCap.Value));
+                        Mathf.Max(1, YokeConfig.StackCap.Value));
 
-                    var weight = Mathf.Max(0f, original.Weight * HoardConfig.WeightMultiplier.Value);
+                    var weight = Mathf.Max(0f, original.Weight * YokeConfig.WeightMultiplier.Value);
 
                     if (shared.m_maxStackSize == stack && Mathf.Approximately(shared.m_weight, weight))
                     {
@@ -131,8 +131,8 @@ namespace Hoard
                         shared.m_weight = weight;
                         changed++;
 
-                        if (HoardConfig.Verbose.Value)
-                            HoardPlugin.Log.LogInfo(
+                        if (YokeConfig.Verbose.Value)
+                            YokePlugin.Log.LogInfo(
                                 prefab.name + ": stack " + original.Stack + " -> " + stack
                                 + ", weight " + original.Weight.ToString("0.##", CultureInfo.InvariantCulture)
                                 + " -> " + weight.ToString("0.##", CultureInfo.InvariantCulture));
@@ -140,7 +140,7 @@ namespace Hoard
 
                     // Only worth saying when the item is still at its vanilla size: an item
                     // already raised does not need to be told what would raise it further.
-                    if (HoardConfig.ScaleWithProgression.Value && stack == original.Stack)
+                    if (YokeConfig.ScaleWithProgression.Value && stack == original.Stack)
                         pending = Progression.PendingFor(group);
                 }
                 else
@@ -164,7 +164,7 @@ namespace Hoard
             // All three counts, because they add up to the item count and the old pair did
             // not. "Retuned 0" on the second pass of a session reads like a failure until you
             // know the rest of the items were already at the right numbers.
-            HoardPlugin.Log.LogInfo(
+            YokePlugin.Log.LogInfo(
                 "Retuned " + changed + " item(s); " + alreadyRight
                 + " already correct; left " + skipped + " alone.");
 
@@ -183,7 +183,7 @@ namespace Hoard
             if (reason == null)
                 return pending != null ? ItemDump.Awaiting + pending : null;
 
-            if (reason != PortalBlocked || !HoardConfig.ScaleWithProgression.Value) return reason;
+            if (reason != PortalBlocked || !YokeConfig.ScaleWithProgression.Value) return reason;
 
             var until = Progression.PendingFor(Progression.PortalRuleOwner());
             return until == null ? reason : reason + " until " + until;
@@ -198,7 +198,7 @@ namespace Hoard
         /// </summary>
         private static string SkipReason(string prefabName, ItemDrop.ItemData.SharedData shared, Original original)
         {
-            if (HoardConfig.IsExcluded(prefabName)) return Excluded;
+            if (YokeConfig.IsExcluded(prefabName)) return Excluded;
 
             // Equipment. Stacking it would silently discard per-item durability.
             if (original.Stack <= 1) return Equipment;
@@ -207,12 +207,12 @@ namespace Hoard
             // those is a pacing decision, so it stays shut until either the switch is thrown
             // or a metal tier is earned - the ramp is the intended way for it to open.
             if (!shared.m_teleportable
-                && !HoardConfig.IncludeNonTeleportable.Value
+                && !YokeConfig.IncludeNonTeleportable.Value
                 && !Progression.PortalRuleLifted())
                 return PortalBlocked;
 
             if (shared.m_itemType == ItemDrop.ItemData.ItemType.Trophy
-                && !HoardConfig.IncludeTrophies.Value)
+                && !YokeConfig.IncludeTrophies.Value)
                 return Trophy;
 
             return null;

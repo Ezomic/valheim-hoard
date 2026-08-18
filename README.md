@@ -1,4 +1,4 @@
-# Hoard
+# Yoke
 
 Bigger stacks, without turning the game into a sandbox.
 
@@ -107,7 +107,7 @@ sitting above its own limit.
 of the group** was personally at that boss's death, which is not the same as the boss having
 died in the world. Those answers part company the moment somebody is offline for a kill.
 
-When Utangard is installed, Hoard asks it instead of reading the key, so stacks never arrive
+When Utangard is installed, Yoke asks it instead of reading the key, so stacks never arrive
 for a biome Utangard still has fenced off. It is a soft dependency in both directions: neither
 mod needs the other, and `DeferToUtangard = false` turns it off.
 
@@ -126,9 +126,9 @@ captured original, why the biome routes stop where they do, and the release chec
 
 ## Core is optional
 
-Hoard installs and runs on its own. [Core](https://github.com/Ezomic/valheim-core) is a
+Yoke installs and runs on its own. [Core](https://github.com/Ezomic/valheim-core) is a
 **soft** dependency: present, it is used; absent, nothing here is degraded. Installing
-Hoard from Thunderstore no longer installs Core with it.
+Yoke from Thunderstore no longer installs Core with it.
 
 What Core adds is the **version gate**, a handshake that compares mod versions and build
 ids on connect and refuses a client that does not match. Without it nothing reports two ends running different item data, which desyncs inventories. The `ObjectDB.CopyOtherDB` patch still puts a joining client on the server's numbers, which covers the common case on its own.
@@ -137,7 +137,7 @@ Solo, none of that applies and Core is not needed at all.
 
 ## Config
 
-`BepInEx\config\ezomic.valheim.hoard.cfg`
+`BepInEx\config\ezomic.valheim.yoke.cfg`
 
 | Key | Default | What it does |
 | --- | --- | --- |
@@ -160,7 +160,7 @@ A value already written to the `.cfg` beats a new default in code. Change the `.
 
 ## The item list
 
-`BepInEx\config\ezomic.valheim.hoard.items.txt`, rewritten on every run.
+`BepInEx\config\ezomic.valheim.yoke.items.txt`, rewritten on every run.
 
 `ExcludeItems` takes prefab names, and prefab names are not guessable: copper ore is
 `CopperOre` but raspberries are `Raspberry` and a draugr's arrow is `draugr_arrow`. So the
@@ -174,7 +174,7 @@ CopperOre    Copper Ore    Material    30          10      portal-blocked
 SwordIron    Iron Sword    OneHanded   1           0.8     equipment
 ```
 
-An arrow means Hoard changed that value. A single number means it did not, and the last
+An arrow means Yoke changed that value. A single number means it did not, and the last
 column says why. The header carries the settings that pass ran under and a count of each
 reason, so `equipment 677, portal-blocked 22` is the whole safety story at a glance.
 
@@ -190,5 +190,5 @@ into the shared play profile with `valheim-own-profile\build-all.ps1`.
 
 ## Author
 
-Hoard is an original mod by **Robbin Thijssen** (Thijssen Software).
+Yoke is an original mod by **Robbin Thijssen** (Thijssen Software).
 Copyright (c) 2026 Robbin Thijssen. MIT licensed. See `LICENSE`.

@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
-    <AssemblyName>Hoard</AssemblyName>
-    <RootNamespace>Hoard</RootNamespace>
+    <AssemblyName>Yoke</AssemblyName>
+    <RootNamespace>Yoke</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.12.1</Version>
+    <Version>0.13.0</Version>
     <Authors>Robbin Thijssen</Authors>
     <Company>Thijssen Software</Company>
-    <Product>Hoard</Product>
+    <Product>Yoke</Product>
     <Description>Bigger stacks, without unbalancing the game.</Description>
     <Copyright>Copyright (c) 2026 Robbin Thijssen</Copyright>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -22,7 +22,7 @@
     <ManagedDir>$(ValheimDir)\valheim_Data\Managed</ManagedDir>
     <ProfileDir Condition="'$(ProfileDir)' == ''">$(MSBuildProjectDirectory)\testprofile</ProfileDir>
     <BepInExCore>$(ProfileDir)\BepInEx\core</BepInExCore>
-    <DeployDir>$(ProfileDir)\BepInEx\plugins\Hoard</DeployDir>
+    <DeployDir>$(ProfileDir)\BepInEx\plugins\Yoke</DeployDir>
   </PropertyGroup>
 
   <ItemGroup>

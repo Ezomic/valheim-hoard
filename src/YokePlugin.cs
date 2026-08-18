@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using BepInEx;
 using BepInEx.Bootstrap;
@@ -5,15 +7,15 @@ using BepInEx.Logging;
 using Ezomic.Core;
 using HarmonyLib;
 
-namespace Hoard
+namespace Yoke
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    // Soft, not hard. Hoard installs and runs on its own; a hard dependency
+    // Soft, not hard. Yoke installs and runs on its own; a hard dependency
     // that is absent does not degrade, the plugin simply never loads. Soft still buys
     // the load-order guarantee when Core is present, which is what registering needs.
     [BepInDependency(CoreGuid, BepInDependency.DependencyFlags.SoftDependency)]
     // Also soft. Utangard decides what "earned" means when it is installed - see
-    // Progression.EarnedThroughUtangard - but Hoard is a stack mod, not a companion piece,
+    // Progression.EarnedThroughUtangard - but Yoke is a stack mod, not a companion piece,
     // and must load on its own. Soft still buys the load-order guarantee that the check
     // needs: Chainloader.PluginInfos is only complete for plugins that loaded first.
     [BepInDependency(UtangardGuid, BepInDependency.DependencyFlags.SoftDependency)]
@@ -21,13 +23,13 @@ namespace Hoard
     // This mod already patches CopyOtherDB precisely because a client rebuilds its item
     // database from the server's copy - so a server without it hands back vanilla stack
     // sizes and undoes the mod on every join.
-    public class HoardPlugin : BaseUnityPlugin
+    public class YokePlugin : BaseUnityPlugin
     {
-        public const string PluginGuid = "ezomic.valheim.hoard";
-        public const string PluginName = "Hoard";
+        public const string PluginGuid = "ezomic.valheim.yoke";
+        public const string PluginName = "Yoke";
         // Pre-1.0 on purpose: 1.0.0 is reserved for the first version that has been played
         // and published. See CHANGELOG.md.
-        public const string PluginVersion = "0.12.1";
+        public const string PluginVersion = "0.13.0";
         public const string PluginAuthor = "Robbin Thijssen";
 
         /// <summary>Core's plugin GUID. Optional - see TryRegisterWithCore.</summary>
@@ -43,7 +45,8 @@ namespace Hoard
         private void Awake()
         {
             Log = Logger;
-            HoardConfig.Bind(Config);
+            AdoptOldConfig();
+            YokeConfig.Bind(Config);
             TryRegisterWithCore();
 
             _harmony = new Harmony(PluginGuid);
@@ -53,9 +56,49 @@ namespace Hoard
         }
 
         /// <summary>
+        /// Carries Hoard's settings over on the first run under the new name.
+        ///
+        /// A BepInEx config file is named after the plugin GUID, so a rename hands everyone
+        /// defaults, and it does it silently. That is worse here than it looks: BiomeOverrides
+        /// runs to about a hundred entries, and losing it drops the mod back to derived-only
+        /// placement with nothing in the log to say why the ore stopped stacking.
+        ///
+        /// Before Bind, and that ordering is the whole trick. BaseUnityPlugin builds Config
+        /// with saveOnInit false, so nothing is written to disk until something binds a
+        /// setting - which leaves a window where dropping the old file into place means the
+        /// new name reads the old answers.
+        ///
+        /// Only when the new file does not exist. After the first run this is a no-op, so a
+        /// later edit is never overwritten by a stale Hoard cfg left lying beside it.
+        /// </summary>
+        private void AdoptOldConfig()
+        {
+            try
+            {
+                string path = Config.ConfigFilePath;
+                if (File.Exists(path)) return;
+
+                string folder = Path.GetDirectoryName(path);
+                if (string.IsNullOrEmpty(folder)) return;
+
+                string old = Path.Combine(folder, "ezomic.valheim.hoard.cfg");
+                if (!File.Exists(old)) return;
+
+                File.Copy(old, path);
+                Log.LogInfo("Adopted Hoard's config, so its settings carry over unchanged.");
+            }
+            catch (Exception e)
+            {
+                // Defaults are a worse outcome than a warning, but neither is worth failing
+                // the load over.
+                Log.LogWarning("Could not adopt Hoard's config: " + e.Message);
+            }
+        }
+
+        /// <summary>
         /// Joins Core's version gate when Core is installed, and does nothing when it is not.
         ///
-        /// Hoard is worth installing on its own, and a hard dependency that is absent does
+        /// Yoke is worth installing on its own, and a hard dependency that is absent does
         /// not degrade gracefully - the plugin never loads at all. So the reference is
         /// compile-time only and the call is made behind a check.
         ///

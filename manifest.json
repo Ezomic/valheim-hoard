@@ -1,9 +1,9 @@
 {
-  "name": "Hoard",
+  "name": "Yoke",
   "author": "Robbin Thijssen",
-  "version_number": "0.12.1",
-  "website_url": "https://github.com/Ezomic/valheim-hoard",
-  "description": "Bigger stacks, without unbalancing the game.",
+  "version_number": "0.13.0",
+  "website_url": "https://github.com/Ezomic/valheim-yoke",
+  "description": "Bigger stacks, earned biome by biome.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2333"
   ]

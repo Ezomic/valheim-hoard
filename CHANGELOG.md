@@ -1,11 +1,34 @@
 # Changelog
 
-Notable changes to Hoard. Format follows [Keep a Changelog](https://keepachangelog.com),
+Notable changes to Yoke. Format follows [Keep a Changelog](https://keepachangelog.com),
 and the mod uses [semantic versioning](https://semver.org).
 
 Nothing here has been released yet. The numbers below are development builds, and **1.0.0 is
 reserved for the first version that has actually been played and published**. A 1.0 asserts
 a mod works in a game, not merely that it compiles and loads.
+
+## [0.13.0] - 2026-08-18
+
+### Hoard is now Yoke
+
+A yoke is the bar across the shoulders that turns two loads into one carry, which is what
+this mod does. "Hoard" named the pile; it never named the carrying, and the carrying is the
+half the progression is about.
+
+Nothing about the behaviour changed. What the rename touches:
+
+- The plugin GUID is now `ezomic.valheim.yoke`, so the config file is renamed with it.
+  **Hoard's config is adopted automatically** on the first run under the new name, before
+  anything binds, so settings carry over unchanged. That matters more than it sounds:
+  `BiomeOverrides` runs to about a hundred entries, and a silent reset would drop the mod
+  back to derived-only placement with nothing in the log to explain why the ore stopped
+  stacking.
+- The assembly, namespace and plugin class follow the name.
+- The icon is redrawn: two stacks under a notched bar, rendered through the suite's shared
+  icon script so it sits correctly beside the others.
+
+No world data is at risk. This mod registers no prefabs, so nothing saved is keyed to a name
+that would stop resolving.
 
 ## [0.12.1] - 2026-08-17
 
@@ -185,7 +208,7 @@ the enum route would have silently capped the ramp at the Plains.
 ### Utangard decides what counts, when it is installed
 
 Utangard opens a biome only when every member of the group was personally at that boss's
-death, which is not the same as the boss having died in the world. Hoard now asks it rather
+death, which is not the same as the boss having died in the world. Yoke now asks it rather
 than reading the raw key, so stacks never arrive for a biome Utangard still has fenced off.
 Soft dependency; `DeferToUtangard = false` turns it off, and neither mod needs the other.
 
@@ -200,8 +223,8 @@ Soft dependency; `DeferToUtangard = false` turns it off, and neither mod needs t
 ### Added
 
 - **An item list, written beside the config on every run**.
-  `ezomic.valheim.hoard.items.txt`. Every item in the game, its vanilla stack size and
-  weight, what Hoard made them, and which rule left it alone when it did nothing. Off with
+  `ezomic.valheim.yoke.items.txt`. Every item in the game, its vanilla stack size and
+  weight, what Yoke made them, and which rule left it alone when it did nothing. Off with
   `WriteItemList = false`.
 
   `ExcludeItems` takes prefab names and prefab names are not guessable: raspberries are
@@ -231,7 +254,7 @@ Soft dependency; `DeferToUtangard = false` turns it off, and neither mod needs t
 
 ### Core is optional
 
-- **Core is now a soft dependency rather than a hard one.** Hoard installs and runs on its
+- **Core is now a soft dependency rather than a hard one.** Yoke installs and runs on its
   own, and the Thunderstore package no longer drags Core in with it. Present, Core is used;
   absent, nothing here is degraded.
 - What is given up standing alone is the **version gate**, not the mod. Item data that
